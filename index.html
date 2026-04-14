@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeltEye — Konveyör Bant Ek Sağlığını Yapay Zeka ile İzleyin</title>
+<meta name="description" content="BeltEye, konveyör bant ek bölgelerini görüntüleyen, yapay zeka destekli analiz yapan, sağlık skoru üreten ve bakım ekiplerine erken uyarı sağlayan endüstriyel izleme çözümüdür.">
+<meta name="keywords" content="konveyör bant izleme, bant ek sağlığı, yapay zeka bant analizi, endüstriyel görüntü analizi, prediktif bakım, BeltEye">
+<meta property="og:title" content="BeltEye — Konveyör Bant Ek Sağlığını Yapay Zeka ile İzleyin">
+<meta property="og:description" content="Bant eklerini görüntüleyin, analiz edin, sağlık skorunu takip edin. Plansız duruşları önlemek için bakım ekiplerinize veri tabanlı karar desteği sağlayın.">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #ffffff;
+  --bg: #f8f9fb;
+  --bg-alt: #f1f3f7;
+  --surface: #ffffff;
+  --navy: #0c1f3f;
+  --navy-light: #1a3158;
+  --blue: #1a6bff;
+  --blue-light: #e8f0fe;
+  --blue-hover: #0052d9;
+  --text: #1a1f2e;
+  --text-secondary: #4a5568;
+  --text-muted: #8896a6;
+  --border: #e2e8f0;
+  --border-light: #edf2f7;
+  --green: #16a34a;
+  --orange: #ea580c;
+  --red: #dc2626;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+[data-theme="dark"] {
+  --white: #0f1724;
+  --bg: #0a1120;
+  --bg-alt: #131d2e;
+  --surface: #162032;
+  --navy: #e2e8f0;
+  --navy-light: #cbd5e1;
+  --blue: #3b8bff;
+  --blue-light: rgba(59,139,255,0.12);
+  --blue-hover: #5ea0ff;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #1e293b;
+  --border-light: #1e293b;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+}
+[data-theme="dark"] nav { background: rgba(15,23,36,0.95); }
+[data-theme="dark"] .hero-mockup, [data-theme="dark"] .dash-preview { background: #0f1724; }
+[data-theme="dark"] .section-navy { background: #060d18; }
+[data-theme="dark"] .why-card { background: #162032; border-color: #1e293b; }
+[data-theme="dark"] .btn-outline { border-color: #3b8bff; color: #3b8bff; }
+[data-theme="dark"] .btn-outline:hover { background: rgba(59,139,255,0.1); }
+[data-theme="dark"] .value-card, [data-theme="dark"] .comp-card, [data-theme="dark"] .sector-card, [data-theme="dark"] .benefit-card, [data-theme="dark"] .faq-item, [data-theme="dark"] .faq-side-card, [data-theme="dark"] .contact-card { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background: var(--bg-alt); border-color: var(--border); color: var(--text); }
+[data-theme="dark"] .footer-logo span { color: #00e5ff; }
+.theme-toggle { display: flex; align-items: center; gap: 6px; margin-right: 12px; cursor: pointer; }
+.theme-toggle-icon { font-size: 14px; color: var(--text-muted); transition: color 0.3s; }
+.theme-toggle-switch { position: relative; width: 40px; height: 22px; background: var(--border); border-radius: 11px; transition: background 0.3s; cursor: pointer; }
+.theme-toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: var(--white); border-radius: 50%; transition: transform 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+[data-theme="dark"] .theme-toggle-switch { background: var(--blue); }
+[data-theme="dark"] .theme-toggle-switch::after { transform: translateX(18px); background: #0f1724; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--white);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, şans-serif;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 100px 0; }
+.section-alt { background: var(--bg); }
+.section-navy { background: var(--navy); color: var(--white); }
+.section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--blue); margin-bottom: 16px;
+}
+.section-label::before { content: ''; width: 20px; height: 2px; background: var(--blue); }
+.section-title {
+  font-size: clamp(32px, 4vw, 48px); font-weight: 800; line-height: 1.15;
+  color: var(--navy); margin-bottom: 20px; letter-spacing: -0.5px;
+}
+.section-navy .section-title { color: var(--white); }
+.section-desc { font-size: 18px; color: var(--text-secondary); max-width: 640px; line-height: 1.8; }
+.section-navy .section-desc { color: rgba(255,255,255,0.7); }
+.section-header { margin-bottom: 56px; }
+.section-header.center { text-align: center; }
+.section-header.center .section-desc { margin: 0 auto; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Inter', şans-serif; font-size: 15px; font-weight: 600;
+  padding: 14px 28px; border: none; border-radius: var(--radius);
+  cursor: pointer; text-decoration: none; transition: all 0.2s ease;
+}
+.btn-primary { background: var(--blue); color: var(--white); }
+.btn-primary:hover { background: var(--blue-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-outline { background: transparent; color: var(--navy); border: 2px solid var(--border); }
+.btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+.btn-white { background: var(--white); color: var(--navy); }
+.btn-white:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--blue); padding: 14px 16px; }
+.btn-ghost:hover { background: var(--blue-light); }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light); transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: var(--shadow-sm); }
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; height: 72px;
+}
+.logo { font-size: 22px; font-weight: 800; color: var(--blue); text-decoration: none; letter-spacing: -0.5px; }
+.logo span { color: #00e5ff; }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--blue); }
+.nav-cta {
+  background: var(--blue); color: var(--white) !important; font-size: 14px; font-weight: 600;
+  padding: 10px 24px; border-radius: var(--radius); text-decoration: none; transition: all 0.2s;
+}
+.nav-cta:hover { background: var(--blue-hover); }
+.nav-mobile-toggle { display: none; background: none; border: none; cursor: pointer; width: 32px; height: 32px; flex-direction: column; justify-content: center; align-items: center; gap: 5px; }
+.nav-mobile-toggle span { display: block; width: 22px; height: 2px; background: var(--navy); transition: all 0.3s; }
+
+/* HERO */
+.hero { padding: 140px 0 100px; background: linear-gradient(180deg, var(--white) 0%, var(--bg) 100%); position: relative; overflow: hidden; }
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--blue-light); color: var(--blue); font-size: 12px; font-weight: 600; padding: 6px 16px; border-radius: 100px; margin-bottom: 24px; }
+.hero-badge-dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; }
+.hero h1 { font-size: clamp(40px, 5vw, 56px); font-weight: 800; line-height: 1.1; color: var(--navy); margin-bottom: 24px; letter-spacing: -1px; }
+.hero h1 .highlight { color: var(--blue); }
+.hero-sub { font-size: 18px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 40px; max-width: 520px; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.hero-visual { position: relative; background: var(--navy); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); }
+.hero-mockup { width: 100%; padding: 20px; display: flex; flex-direction: column; }
+.mockup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.mockup-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 1px; }
+.mockup-live { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #4ade80; letter-spacing: 1px; }
+.mockup-live-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; animation: livePulse 2s ease-in-out infinite; }
+@keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.mockup-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.mockup-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.mockup-card-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+.mockup-card-value { font-size: 22px; font-weight: 700; }
+.mockup-card-value.green { color: #4ade80; }
+.mockup-card-value.yellow { color: #fbbf24; }
+.mockup-card-value.orange { color: #fb923c; }
+.mockup-card-value.blue { color: #60a5fa; }
+.mockup-bar-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; margin-top: 12px; }
+.mockup-bar { height: 32px; border-radius: 3px; }
+.bar-ok { background: rgba(74,222,128,0.4); }
+.bar-warn { background: rgba(251,191,36,0.5); }
+.bar-danger { background: rgba(251,146,60,0.6); }
+.bar-critical { background: rgba(248,113,113,0.7); }
+.mockup-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+.mockup-status { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.35); letter-spacing: 1px; }
+
+/* TRUST BAR */
+.trust-bar { padding: 48px 0; border-bottom: 1px solid var(--border-light); }
+.trust-items { display: flex; justify-content: center; gap: 64px; align-items: center; }
+.trust-item { text-align: center; }
+.trust-value { font-size: 28px; font-weight: 800; color: var(--navy); line-height: 1; }
+.trust-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+/* VALUE PROPS */
+.value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.value-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px 28px; transition: all 0.3s; }
+.value-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.value-icon { width: 48px; height: 48px; background: var(--blue-light); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px; }
+.value-card h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+.value-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
+
+/* PROBLEM */
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.problem-list { display: flex; flex-direction: column; gap: 20px; }
+.problem-item { display: flex; gap: 16px; align-items: flex-start; }
+.problem-icon { width: 40px; height: 40px; flex-shrink: 0; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: var(--red); font-size: 16px; }
+.problem-item h4 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.problem-item p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.problem-visual { background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; }
+.problem-stat-val { font-size: 64px; font-weight: 800; color: var(--red); line-height: 1; }
+.problem-stat-label { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
+.problem-stat-sub { font-size: 12px; color: var(--text-muted); max-width: 320px; margin: 16px auto 0; line-height: 1.6; }
+
+/* SOLUTION */
+.solution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.solution-points { display: flex; flex-direction: column; gap: 24px; }
+.solution-point { display: flex; gap: 16px; align-items: flex-start; }
+.solution-check { width: 28px; height: 28px; flex-shrink: 0; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 14px; font-weight: 700; margin-top: 2px; }
+.solution-point h4 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.solution-point p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+/* HOW IT WORKS */
+.steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+.steps-grid::before { content: ''; position: absolute; top: 36px; left: 12.5%; right: 12.5%; height: 2px; background: var(--border); z-index: 0; }
+.step { text-align: center; position: relative; z-index: 1; padding: 0 16px; }
+.step-num { width: 72px; height: 72px; background: var(--white); border: 2px solid var(--blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--blue); }
+.step h3 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+.step p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+/* COMPONENTS */
+.comp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.comp-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 20px; text-align: center; transition: all 0.3s; }
+.comp-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
+.comp-icon { width: 56px; height: 56px; background: var(--navy); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 24px; }
+.comp-card h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.comp-card p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+/* BENEFITS */
+.benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.benefit-card { display: flex; gap: 20px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; transition: all 0.3s; }
+.benefit-card:hover { border-color: var(--blue); box-shadow: var(--shadow-sm); }
+.benefit-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--blue); background: var(--blue-light); width: 36px; height: 36px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.benefit-card h4 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+.benefit-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+/* DASHBOARD */
+.dash-preview { background: var(--navy); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-lg); }
+.dash-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.dash-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 1px; }
+.dash-live { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #4ade80; }
+.dash-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.dash-stat { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px 16px; }
+.dash-stat-label { font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
+.dash-stat-val { font-size: 28px; font-weight: 700; }
+.dash-joints { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; margin-bottom: 20px; }
+.dash-joint { height: 40px; border-radius: 4px; position: relative; }
+.dash-joint-tip { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.3); white-space: nowrap; }
+.dash-log { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; }
+.dash-log-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; font-size: 12px; color: rgba(255,255,255,0.5); font-family: 'JetBrains Mono', monospace; }
+.dash-log-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.ai-output { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.ai-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; }
+.ai-card-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.ai-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.ai-tag { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-top: 12px; }
+.ai-tag.green { background: #f0fdf4; color: var(--green); }
+.ai-tag.orange { background: #fff7ed; color: var(--orange); }
+
+/* SECTORS */
+.sectors-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.sector-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; transition: all 0.3s; }
+.sector-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.sector-icon { font-size: 32px; margin-bottom: 16px; }
+.sector-card h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+.sector-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+.sector-tag { display: inline-block; margin-top: 16px; font-size: 12px; font-weight: 600; color: var(--blue); background: var(--blue-light); padding: 4px 12px; border-radius: 100px; }
+
+/* WHY BELTEYE */
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.why-card { padding: 40px 32px; border: 1px solid rgba(255,255,255,0.1); transition: background 0.3s; }
+.why-card:hover { background: rgba(255,255,255,0.04); }
+.why-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--blue); margin-bottom: 16px; letter-spacing: 2px; }
+.why-card h4 { font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+.why-card p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.7; }
+
+/* FAQ */
+.faq-grid { display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start; }
+.faq-list { display: flex; flex-direction: column; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-q { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; cursor: pointer; font-size: 16px; font-weight: 600; color: var(--navy); gap: 16px; transition: color 0.2s; }
+.faq-q:hover { color: var(--blue); }
+.faq-arrow { font-size: 12px; color: var(--text-muted); transition: transform 0.3s; flex-shrink: 0; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); color: var(--blue); }
+.faq-a { font-size: 15px; color: var(--text-secondary); line-height: 1.8; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; padding-bottom: 0; }
+.faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
+.faq-side { display: flex; flex-direction: column; gap: 16px; }
+.faq-side-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; }
+.faq-side-card h4 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.faq-side-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+/* CTA BAND */
+.cta-band { padding: 80px 0; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); text-align: center; }
+.cta-band h2 { font-size: clamp(28px, 3.5vw, 40px); font-weight: 800; color: var(--white); margin-bottom: 16px; }
+.cta-band p { font-size: 18px; color: rgba(255,255,255,0.65); max-width: 560px; margin: 0 auto 36px; line-height: 1.7; }
+.cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* CONTACT */
+.contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: start; }
+.contact-form { display: flex; flex-direction: column; gap: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 12px; font-weight: 600; color: var(--text); }
+.form-group input, .form-group select, .form-group textarea {
+  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  font-family: 'Inter', şans-serif; font-size: 15px; padding: 12px 16px;
+  border-radius: var(--radius); outline: none; transition: border-color 0.2s; width: 100%;
+}
+.form-group textarea { min-height: 100px; resize: vertical; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); background: var(--white); }
+.form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
+.form-check { display: flex; align-items: flex-start; gap: 10px; }
+.form-check input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; accent-color: var(--blue); }
+.form-check label { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+.form-success { text-align: center; padding: 48px 24px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-lg); }
+.form-success h3 { font-size: 24px; font-weight: 700; color: var(--green); margin-bottom: 12px; }
+.form-success p { color: var(--text-secondary); font-size: 15px; }
+.contact-info { display: flex; flex-direction: column; gap: 12px; }
+.contact-card { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); transition: border-color 0.2s; }
+.contact-card:hover { border-color: var(--blue); }
+.contact-card-icon { width: 40px; height: 40px; background: var(--blue-light); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.contact-card-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.contact-card-val { font-size: 15px; color: var(--text); line-height: 1.5; }
+
+/* FOOTER */
+footer { background: var(--navy); color: rgba(255,255,255,0.6); }
+.footer-top { padding: 64px 0; display: grid; grid-template-columns: 280px 1fr; gap: 64px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.footer-logo { font-size: 24px; font-weight: 800; color: var(--blue); margin-bottom: 12px; }
+.footer-logo span { color: var(--white); }
+.footer-tagline { font-size: 14px; line-height: 1.7; margin-bottom: 20px; }
+.footer-social { display: flex; gap: 8px; }
+.social-link { width: 36px; height: 36px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,0.5); text-decoration: none; transition: all 0.2s; }
+.social-link:hover { border-color: var(--blue); color: var(--blue); }
+.footer-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.footer-col-title { font-size: 12px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.footer-col a, .footer-cols > div > a { display: block; font-size: 14px; color: rgba(255,255,255,0.5); text-decoration: none; padding: 4px 0; transition: color 0.2s; }
+.footer-col a:hover, .footer-cols > div > a:hover { color: var(--white); }
+.footer-bottom { padding: 20px 0; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+
+/* SCROLL REVEAL */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .steps-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .steps-grid::before { display: none; }
+  .comp-grid { grid-template-columns: repeat(3, 1fr); }
+  .dash-stats { grid-template-columns: repeat(2, 1fr); }
+  .why-grid { grid-template-columns: 1fr; }
+  .faq-grid { grid-template-columns: 1fr; }
+  .faq-side { display: none; }
+  .footer-top { grid-template-columns: 1fr; gap: 40px; }
+  .footer-cols { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .section { padding: 72px 0; }
+  .nav-links { display: none; }
+  .nav-mobile-toggle { display: flex; }
+  .hero { padding: 110px 0 64px; }
+  .hero h1 { font-size: 36px; }
+  .value-grid, .problem-grid, .solution-grid, .benefits-grid, .sectors-grid, .ai-output, .contact-grid { grid-template-columns: 1fr; }
+  .steps-grid, .comp-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .trust-items { flex-wrap: wrap; gap: 32px; }
+  .mockup-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-cols { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
+.nav-mobile-menu { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 24px; box-shadow: var(--shadow-md); z-index: 99; }
+.nav-mobile-menu.open { display: block; }
+.nav-mobile-menu a { display: block; padding: 12px 0; font-size: 15px; font-weight: 500; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border-light); }
+.nav-mobile-menu a:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="logo">Belt<span>Eye</span></a>
+    <ul class="nav-links">
+      <li><a href="#solution">Çözüm</a></li>
+      <li><a href="#how">Nasıl Çalışır</a></li>
+      <li><a href="#sectors">Sektörler</a></li>
+      <li><a href="#about">Hakkımızda</a></li>
+      <li><a href="#contact">İletişim</a></li>
+    </ul>
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="theme-toggle-icon">&#9789;</span>
+      <div class="theme-toggle-switch"></div>
+      <span class="theme-toggle-icon">&#9788;</span>
+    </div>
+    <a href="https://belteye.com/app" class="nav-cta">Giriş</a>
+    <button class="nav-mobile-toggle" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a href="#solution" onclick="closeMobileMenu()">Çözüm</a>
+  <a href="#how" onclick="closeMobileMenu()">Nasıl Çalışır</a>
+  <a href="#sectors" onclick="closeMobileMenu()">Sektörler</a>
+  <a href="#about" onclick="closeMobileMenu()">Hakkımızda</a>
+  <a href="#contact" onclick="closeMobileMenu()">İletişim</a>
+  <a href="#contact" onclick="closeMobileMenu()" style="color:var(--blue);font-weight:700;">Demo Talep Et</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-badge"><span class="hero-badge-dot"></span> Endüstriyel Görüntü Analizi</div>
+        <h1>Konveyör Bant<br>Ek Sağlığını<br><span class="highlight">Yapay Zeka ile</span> İzleyin</h1>
+        <p class="hero-sub">BeltEye, konveyör bant ek bölgelerini görüntüleyen, yapay zeka destekli analiz yapan ve bakım ekiplerine erken uyarı sağlayan endüstriyel izleme çözümüdür. Plansız duruş riskini azaltın, kontrolleri standardize edin.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary">Demo Talep Et &rarr;</a>
+          <a href="#how" class="btn btn-outline">Nasıl Çalışır?</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="demodemo.png" alt="BeltEye Dashboard" style="width:100%;border-radius:16px;box-shadow:0 25px 50px rgba(0,0,0,0.25);">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar reveal">
+  <div class="container">
+    <div class="trust-items">
+      <div class="trust-item"><div class="trust-value">7/24</div><div class="trust-label">Kesintisiz İzleme</div></div>
+      <div class="trust-item"><div class="trust-value">12+</div><div class="trust-label">Ek Noktası Takibi</div></div>
+      <div class="trust-item"><div class="trust-value">&lt;10sn</div><div class="trust-label">Analiz Süresi</div></div>
+      <div class="trust-item"><div class="trust-value">%100</div><div class="trust-label">Saha Uyumlu</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUE PROPS -->
+<section class="section reveal">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">Değer Önerisi</div>
+      <h2 class="section-title">Bant Eklerinizi Görünür<br>ve Yönetilebilir Hale Getirin</h2>
+      <p class="section-desc">BeltEye, görüntüyü operasyon verisine dönüştürür. Bakım ekipleriniz sahadaki durumu tahmin yerine veriye dayalı olarak değerlendirir.</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card">
+        <div class="value-icon">&#128065;</div>
+        <h3>Görüntüye Dayalı İzleme</h3>
+        <p>Bant ek bölgelerini kamera sistemiyle düzenli olarak görüntüleyin. Manuel kontrollerdeki tutarsızlığı ortadan kaldırın, her kontrolü kayıt altına alın.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">&#129302;</div>
+        <h3>Yapay Zeka Analizi</h3>
+        <p>Görüntüleri yapay zeka modeli analiz eder; çatlak, aşındırma, kaymış ek gibi hasar tiplerini sınıflandırır ve sağlık skoru üretir.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">&#128202;</div>
+        <h3>Veri Tabanlı Karar Desteği</h3>
+        <p>Ek noktalarının geçmiş skorları, trend grafikleri ve alarm geçmişi ile bakım planlamasını önceliklendirin. Karar verme sürecini veriye dayandırın.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section section-alt reveal" id="problem">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Problem</div>
+      <h2 class="section-title">Bant Ek Arızaları Neden<br>Bu Kadar Maliyetli?</h2>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-list">
+        <div class="problem-item"><div class="problem-icon">&#9888;</div><div><h4>Plansız Duruşlar</h4><p>Ek noktalarında oluşan hasar genellikle gözle fark edilemez. Tespit edildiğinde bant durmuş, üretim hattının tamamında aksamıştır.</p></div></div>
+        <div class="problem-item"><div class="problem-icon">&#128269;</div><div><h4>Manuel Kontrol Yetersizliği</h4><p>Gözle yapılan kontroller subjektiftir; kişi, ışık ve zaman farklarına bağlı olarak değişir. Standart bir ölçüm yoktur, geçmiş karşılaştırma yapılamaz.</p></div></div>
+        <div class="problem-item"><div class="problem-icon">&#128200;</div><div><h4>İzlenebilirlik Eksikliği</h4><p>Hangi ekin ne zaman kontrol edildiği, ne durumda olduğu ve ne hızla kötüleştiği çoğu tesiste dokümante edilmez.</p></div></div>
+        <div class="problem-item"><div class="problem-icon">&#9201;</div><div><h4>Geç Müdahale</h4><p>Hasar görsel olarak fark edildiğinde genellikle ilerlenmiş durumdadır. Erken uyarı mekanizması olmadan zamanında müdahale mümkün değildir.</p></div></div>
+      </div>
+      <div class="problem-visual">
+        <div class="problem-stat">
+          <div class="problem-stat-val">%70</div>
+          <div class="problem-stat-label">Plansız duruşların önemli bir bölümü bant ek arızalarından kaynaklanır.</div>
+        </div>
+        <div class="problem-stat-sub">Tek bir bant kopma olayı; üretim kaybı, iş güvenliği riski ve acil bakım maliyeti olarak saatler süren etkiler yaratabilir.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="section reveal" id="solution">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Çözüm</div>
+      <h2 class="section-title">BeltEye ile Bant Ek Sağlığını<br>Kontrol Altına Alın</h2>
+      <p class="section-desc">BeltEye, saha koşullarında çalışan kamera sistemi, yapay zeka analizi ve dashboard ekranıyla bant eklerinizi izlenebilir hale getirir.</p>
+    </div>
+    <div class="solution-grid">
+      <div class="solution-points">
+        <div class="solution-point"><div class="solution-check">&#10003;</div><div><h4>Görüntüyü Veriye Dönüştürün</h4><p>Her ek noktası görüntülenir, yapay zeka tarafından analiz edilir ve sayısal bir sağlık skoru üretilir. Subjektif değerlendirme yerine ölçülebilir veri elde edin.</p></div></div>
+        <div class="solution-point"><div class="solution-check">&#10003;</div><div><h4>Erken Uyarı Alın</h4><p>Skor düşüşleri ve anomaliler otomatik olarak alarm üretir. Hasar ilerlemeden müdahale şansı yakalanır.</p></div></div>
+        <div class="solution-point"><div class="solution-check">&#10003;</div><div><h4>Geçmişi İzleyin</h4><p>Her ekin skor geçmişi, hasar kayıtları ve trend grafikleri saklanır. Hangi ekin ne zaman bakıma ihtiyaç duyduğunu veriye dayalı olarak görün.</p></div></div>
+        <div class="solution-point"><div class="solution-check">&#10003;</div><div><h4>Kontrolleri Standardize Edin</h4><p>Manuel kontrollerin kalitesi kişiden kişiye değişmez. Her kontrol aynı yöntemle, aynı ölçütle yapılır ve kayıt altına alınır.</p></div></div>
+      </div>
+      <div class="hero-visual" style="min-height:400px;">
+        <img src="demo2.png" alt="BeltEye Dashboard - Ek Detay" style="width:100%;border-radius:16px;box-shadow:0 25px 50px rgba(0,0,0,0.25);">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section section-alt reveal" id="how">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">Nasıl Çalışır</div>
+      <h2 class="section-title">Dört Adımda Bant Ek İzleme</h2>
+      <p class="section-desc">Kurulumdan analize, raporlamadan uyarıya kadar tüm süreç entegre ve otomatik olarak çalışır.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step"><div class="step-num">01</div><h3>Saha Kurulumu</h3><p>BeltEye saha ölçüm sistemi konveyör hattının ek geçiş noktasına monte edilir. Sensör, ekin kamera önünden geçişini algılar.</p></div>
+      <div class="step"><div class="step-num">02</div><h3>Saha Analiz</h3><p>Her ek noktası saha ölçüm sistemi tarafından algılanır ve edge işlem birimine aktarılır.</p></div>
+      <div class="step"><div class="step-num">03</div><h3>BeltEye Model Analizi</h3><p>BeltEye model analizi ile hasar tipi, şiddet derecesi ve sağlık skoru üretilir. Sonuçlar anlık olarak dashboard'a yansır.</p></div>
+      <div class="step"><div class="step-num">04</div><h3>Raporlama ve Uyarı</h3><p>Kritik skor düşüşleri alarm üretir. Tüm veriler geçmiş kayıtlarla birlikte raporlanır, bakım ekipleri bilgilendirilir.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="section section-alt reveal">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">Faydalar</div>
+      <h2 class="section-title">Operasyonunuza Sağladığı Katkı</h2>
+      <p class="section-desc">BeltEye sadece bir izleme aracı değil; bakım planlaması, risk yönetimi ve operasyonel verimlilik için veri üreten bir sistemdir.</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card"><div class="benefit-num">01</div><div><h4>Plansız Duruş Riskini Azaltın</h4><p>Ek noktalarındaki bozulmayı erken tespit ederek, ani duruşların önüne geçin. Bakım zamanlamasını veriye dayalı olarak belirleyin.</p></div></div>
+      <div class="benefit-card"><div class="benefit-num">02</div><div><h4>Kontrolleri Standardize Edin</h4><p>Her kontrol aynı yöntemle, aynı ölçütle yapılır. Kişiye bağlı değerlendirme farklarını ortadan kaldırın.</p></div></div>
+      <div class="benefit-card"><div class="benefit-num">03</div><div><h4>Geçmişi İzlenebilir Kılın</h4><p>Her ek noktasının skor geçmişi, görüntü arşivi ve alarm kayıtları saklanır. Denetim ve raporlama süreçlerinde kullanın.</p></div></div>
+      <div class="benefit-card"><div class="benefit-num">04</div><div><h4>Bakım Ekiplerine Karar Desteği</h4><p>Hangi ekin öncelikli bakıma ihtiyacı olduğunu net olarak görün. Kaynakları doğru yönlendirin, gereksiz bakımdan kaçının.</p></div></div>
+      <div class="benefit-card"><div class="benefit-num">05</div><div><h4>Operasyonel Verimlilik</h4><p>Manuel kontrollere harcanan zamanı azaltın. Sahada gezerken değil, dashboard üzerinden bant sağlığını izleyin.</p></div></div>
+      <div class="benefit-card"><div class="benefit-num">06</div><div><h4>İş Güvenliği Katkısı</h4><p>Bant başında yapılan riskli manuel kontroller azalır. Uzaktan izleme ile personel güvenliğine katkı sağlanır.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD / AI -->
+<section class="section reveal">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">Dashboard ve AI Çıktıları</div>
+      <h2 class="section-title">Tüm Veriler Tek Ekranda</h2>
+      <p class="section-desc">Ek noktalarının sağlık skorları, alarm durumu, AI değerlendirmeleri ve geçmiş trendleri tek bir dashboard üzerinden izleyin.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div style="border-radius:16px;overflow:hidden;box-shadow:0 25px 50px rgba(0,0,0,0.25);">
+        <img src="ek3.png" alt="BeltEye Dashboard - EK-03 Detay" style="width:100%;display:block;">
+      </div>
+      <div style="border-radius:16px;overflow:hidden;box-shadow:0 25px 50px rgba(0,0,0,0.25);">
+        <img src="ek7.png" alt="BeltEye Dashboard - EK-07 Detay" style="width:100%;display:block;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTORS -->
+<section class="section section-alt reveal" id="sectors">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label">Sektörler</div>
+      <h2 class="section-title">Hangi Tesislerde Kullanılır?</h2>
+      <p class="section-desc">BeltEye, konveyör bant kullanan her endüstriyel tesiste uygulanabilir. Özellikle kritik taşıma hatlarında değer üretir.</p>
+    </div>
+    <div class="sectors-grid">
+      <div class="sector-card"><div class="sector-icon">&#9935;</div><h3>Madencilik</h3><p>Yeraltı ve açık ocak konveyör hatları. Toz, nem ve titreşim koşullarında güvenilir izleme. Ana bant hatları ve nakliye konveyörlerinde sürekli ek takibi.</p><span class="sector-tag">Ana Hat Bantları</span></div>
+      <div class="sector-card"><div class="sector-icon">&#127981;</div><h3>Çimento ve Taş Ocakları</h3><p>Kireçtaşı, klinker ve ham madde taşıma bantlarında yüksek toz ortamında izleme. Ek noktası arızalarının yol açtığı üretim duruşlarını önleyin.</p><span class="sector-tag">Ağır Yük Bantları</span></div>
+      <div class="sector-card"><div class="sector-icon">&#9889;</div><h3>Enerji Tesisleri</h3><p>Kömür besleme konveyörleri ve kül taşıma hatlarında kesintisiz izleme. Termik santrallerde üretim sürekliliği için kritik bantların takibi.</p><span class="sector-tag">Besleme Hatları</span></div>
+      <div class="sector-card"><div class="sector-icon">&#128674;</div><h3>Liman ve Bulk Terminal</h3><p>Yükleme ve boşaltma köprüleri, stok sahası konveyörlerinde gerçek zamanlı izleme. Yüksek kapasite hatlarında ek güvenilirliğini koruyun.</p><span class="sector-tag">Yükleme Köprüleri</span></div>
+      <div class="sector-card"><div class="sector-icon">&#128296;</div><h3>Demir-Çelik</h3><p>Cevher ve pelet taşıma bantlarında yüksek sıcaklık koşullarına dayanıklı izleme. Fırın besleme hatlarında sıcak materyal kaynaklı bant hasarlarını erken tespit edin.</p><span class="sector-tag">Hammadde Taşıma</span></div>
+      <div class="sector-card"><div class="sector-icon">&#127806;</div><h3>Dökme Malzeme Taşıma</h3><p>Tarım, gıda, gübre ve kimya sektörlerinde kullanılan konveyör bantlarında ek noktası izleme. Farklı malzeme türlerine uyumlu analiz.</p><span class="sector-tag">Genel Endüstri</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY BELTEYE -->
+<section class="section section-navy reveal" id="about">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label" style="color:rgba(255,255,255,0.5);">Neden BeltEye</div>
+      <h2 class="section-title">Sahada Çalışır,<br>Veri Üretir, Karar Destekler</h2>
+      <p class="section-desc">BeltEye bir laboratuvar ürünü değil; saha için tasarlanmış, endüstriyel koşullarda çalışmak üzere geliştirilmiş bir çözümdür.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-num">01</div><h4>Saha Odaklı Tasarım</h4><p>Tüm bileşenler endüstriyel ortam için seçilmiştir. Toz, nem, titreşim ve sıcaklık koşullarında test edilmiştir.</p></div>
+      <div class="why-card"><div class="why-num">02</div><h4>Uçtan Uca Sistem</h4><p>Kameradan dashboard'a kadar tüm zincir entegredir. Ayrı ayrı bileşenleri birleştirme zahmetine gerek yoktur.</p></div>
+      <div class="why-card"><div class="why-num">03</div><h4>Hızlı Kurulum</h4><p>Standart tek hat kurulumu bir gün içinde tamamlanabilir. Mevcut altyapıya minimum müdahale ile devreye alınır.</p></div>
+      <div class="why-card"><div class="why-num">04</div><h4>Edge Tabanlı Çalışma</h4><p>Veriler sahada işlenir. İnternet bağlantısı kesilse bile sistem çalışmaya devam eder. Bulut senkronizasyonu opsiyoneldir.</p></div>
+      <div class="why-card"><div class="why-num">05</div><h4>Ölçeklenebilir Yapı</h4><p>Tek hat ile başlayıp, tesis genelinde yaygınlaştırabilirsiniz. Her hat için bağımsız izleme ve raporlama.</p></div>
+      <div class="why-card"><div class="why-num">06</div><h4>Yerel Destek</h4><p>Türkiye merkezli ekip tarafından geliştirilmiş ve desteklenmektedir. Saha ziyareti, kurulum ve teknik destek yerel olarak sağlanır.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section reveal">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Sıkça Sorulan Sorular</div>
+      <h2 class="section-title">Merak Edilenler</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-list" id="faqList">
+        <div class="faq-item open"><div class="faq-q"><span>BeltEye tam olarak ne yapar?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">BeltEye, konveyör bant ek bölgelerini kamera ile görüntüleyen, bu görüntüleri yapay zeka ile analiz eden, her ek noktasına sağlık skoru üreten ve bakım ekiplerine erken uyarı sağlayan bir izleme sistemidir. Amaç, bant ek durumunu görünür ve ölçülebilir hale getirmektir.</div></div>
+        <div class="faq-item"><div class="faq-q"><span>Kurulum ne kadar sürer?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Standart tek hat kurulumu, elektrik ve network altyapısı hazırsa 1 gün içinde tamamlanır. Kamera montajı, sensör kalibrasyonu ve yazılım devreye alma dahildir. Çok hatlı tesislerde 2-3 gün planlanabilir.</div></div>
+        <div class="faq-item"><div class="faq-q"><span>İnternet bağlantısı şart mı?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Hayır. Tüm görüntü analizi edge işlem biriminde sahada da gerçekleştirilebilir. İnternet olmadan da sistem çalışabilir. Kurulacak sistem tesise özel olarak değerlendirilir. Fayda maliyet analizine göre kurulum yapılır.</div></div>
+        <div class="faq-item"><div class="faq-q"><span>Saha koşullarına dayanıklı mı?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Evet. Kamera muhafazaları IP67 koruma sınıfındadır; tam toz ve su geçirmezlik sağlar. Tüm bileşenler madencilik, çimento ve ağır sanayi ortamlarında test edilmiştir.</div></div>
+        <div class="faq-item"><div class="faq-q"><span>Mevcut sistemlere entegre edilebilir mi?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">BeltEye, SCADA ve ERP sistemleriyle standart endüstriyel protokoller üzerinden entegre olabilir. API üzerinden veri paylaşımı desteklenmektedir. Mevcut altyapınıza minimum müdahale ile devreye alınır.</div></div>
+        <div class="faq-item"><div class="faq-q"><span>Kaç ek noktası aynı anda izlenebilir?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Ek kısıtlaması yoktur. Ek sayısı analiz edilen veri büyüklüğünü, yazılım ve donanım unsurlarını etkiler.</div></div>
+        <div class="faq-item"><div class="faq-q"><span>Yanlış alarm oranı nedir?</span><span class="faq-arrow">&#9660;</span></div><div class="faq-a">Sistem, tesisinize özel kalibrasyon ile çalışır. Alarm eşikleri ve hassasiyet ayarları kullanıcı tarafından düzenlenebilir. İlk dönemde öğrenme modu ile tesisinizin normal koşulları modele tanıtılarak yanlış alarm oranı minimuma indirilir.</div></div>
+      </div>
+      <div class="faq-side">
+        <div class="faq-side-card" style="background:var(--blue-light);border-color:rgba(26,107,255,0.15);">
+          <h4>Tesisinize Özel Değerlendirme</h4>
+          <p>Teknik ekibimiz mevcut hattınızı inceleyerek size özel bir çözüm önerisi sunabilir.</p>
+          <a href="#contact" class="btn btn-primary" style="margin-top:16px;width:100%;">Demo Talep Et</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band reveal">
+  <div class="container">
+    <h2>Bant Ek Sağlığını<br>Kontrol Altına Alın</h2>
+    <p>Tesisinize özel ücretsiz bir değerlendirme için ekibimizle iletişime geçin. Mevcut hattınızı birlikte inceleyelim.</p>
+    <div class="cta-actions">
+      <a href="#contact" class="btn btn-white">Demo Talep Et &rarr;</a>
+      <a href="#how" class="btn btn-ghost" style="color:rgba(255,255,255,0.7);">Nasıl Çalışır?</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section reveal" id="contact">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">İletişim</div>
+      <h2 class="section-title">Demo Talep Edin</h2>
+      <p class="section-desc">Tesisinize özel bir analiz için formu doldürün. Teknik ekibimiz en kısa sürede sizinle iletişime geçecektir.</p>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group"><label>Ad Soyad</label><input type="text" placeholder="Ahmet Yilmaz" required></div>
+            <div class="form-group"><label>Şirket / Kurum</label><input type="text" placeholder="XYZ Madencilik A.S." required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>E-posta</label><input type="email" placeholder="ahmet@şirket.com" required></div>
+            <div class="form-group"><label>Telefon</label><input type="tel" placeholder="+90 5__ ___ __ __"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Görev / Pozisyon</label><input type="text" placeholder="Bakım Müdürü"></div>
+            <div class="form-group"><label>Sektör</label><select><option value="">Seciniz</option><option>Madencilik</option><option>Çimento / Taş Ocağı</option><option>Enerji / Termik Santral</option><option>Liman / Bulk Terminal</option><option>Demir-Çelik</option><option>Dökme Malzeme Taşıma</option><option>Diger</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Konveyör Hat Sayısı</label><input type="text" placeholder="orn. 3 hat"></div>
+            <div class="form-group"><label>Tahmini Bant Uzunluğu</label><input type="text" placeholder="orn. 2x400m"></div>
+          </div>
+          <div class="form-group"><label>Mevcut Sorun veya Notunuz</label><textarea placeholder="Ek noktalarında sık arıza yaşıyoruz, özellikle yaz aylarında..."></textarea></div>
+          <div class="form-check"><input type="checkbox" id="consent" required><label for="consent">Kişisel verilerimin BeltEye tarafından iletişim amacıyla işlenmesine onay veriyorum.</label></div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">Demo Talep Gönder &rarr;</button>
+        </form>
+        <div class="form-success" id="formSuccess" style="display:none">
+          <div style="font-size: 48px;margin-bottom:16px;">&#10004;</div>
+          <h3>Talebiniz Alındı</h3>
+          <p>Teknik ekibimiz en kısa sürede sizinle iletişime geçecektir.</p>
+        </div>
+      </div>
+      <div class="contact-info">
+        <div class="contact-card"><div class="contact-card-icon">&#128205;</div><div><div class="contact-card-label">Ofis</div><div class="contact-card-val">İzmir, Türkiye</div></div></div>
+        <div class="contact-card"><div class="contact-card-icon">&#128231;</div><div><div class="contact-card-label">E-posta</div><div class="contact-card-val">info@belteye.com</div></div></div>
+        <div class="contact-card"><div class="contact-card-icon">&#128222;</div><div><div class="contact-card-label">Telefon</div><div class="contact-card-val">+90 532 362 82 04</div></div></div>
+        <div class="contact-card"><div class="contact-card-icon">&#128339;</div><div><div class="contact-card-label">Çalışma Saatleri</div><div class="contact-card-val">Hafta içi 08:00 &ndash; 18:00<br><span style="font-size: 12px;color:var(--text-muted);">Teknik destek: 7/24</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Belt<span>Eye</span></div>
+        <p class="footer-tagline">Konveyör bant ek sağlığını görünür, ölçülebilir ve yönetilebilir hale getiren endüstriyel izleme çözümü.</p>
+        <div class="footer-social"><a href="#" class="social-link" title="LinkedIn">in</a><a href="#" class="social-link" title="YouTube">yt</a></div>
+      </div>
+      <div class="footer-cols">
+        <div><div class="footer-col-title">Ürün</div><a href="#solution">Çözüm</a><a href="#how">Nasıl Çalışır</a><a href="#">Dashboard</a></div>
+        <div><div class="footer-col-title">Sektörler</div><a href="#sectors">Madencilik</a><a href="#sectors">Çimento</a><a href="#sectors">Enerji</a><a href="#sectors">Liman</a><a href="#sectors">Demir-Çelik</a></div>
+        <div><div class="footer-col-title">Şirket</div><a href="#about">Hakkımızda</a><a href="#contact">İletişim</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 BeltEye &mdash; Tüm hakları saklıdır.</span>
+      <span style="color:rgba(255,255,255,0.35);">Türkiye'de tasarlandı ve geliştirildi.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => { document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20); });
+function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
+const revealObserver = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+const jointData = [92, 88, 64, 91, 85, 78, 92, 89, 95, 38, 87, 90];
+const dashJoints = document.getElementById('dashJoints');
+jointData.forEach((score, i) => {
+  const el = document.createElement('div');
+  el.className = 'dash-joint';
+  if (score >= 80) el.style.background = 'rgba(74,222,128,0.5)';
+  else if (score >= 60) el.style.background = 'rgba(251,191,36,0.6)';
+  else if (score >= 40) el.style.background = 'rgba(251,146,60,0.7)';
+  else el.style.background = 'rgba(248,113,113,0.8)';
+  el.innerHTML = '<span class="dash-joint-tip">EK-' + String(i+1).padStart(2,'0') + '</span>';
+  dashJoints.appendChild(el);
+});
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+function handleSubmit(e) { e.preventDefault(); e.target.style.display = 'none'; document.getElementById('formSuccess').style.display = 'block'; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('belteye-theme', isDark ? 'light' : 'dark');
+}
+(function() {
+  const saved = localStorage.getItem('belteye-theme');
+  if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+})();
+</script>
+</body>
+</html>
