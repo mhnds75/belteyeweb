@@ -46,8 +46,8 @@ background:linear-gradient(135deg,#0f1f33 0%,#1e3a5f 50%,#0f1f33 100%)}
     <div class="card-desc">Yönetim paneline erişmek için giriş yapın</div>
     <form onsubmit="login(event)">
       <div class="form-group">
-        <label class="form-label">Kullanıcı Adı</label>
-        <input type="text" id="email" class="form-input" placeholder="Kullanıcı adınız" required>
+        <label class="form-label">E-posta</label>
+        <input type="email" id="email" class="form-input" placeholder="belteye@belteye.com" required>
       </div>
       <div class="form-group">
         <label class="form-label">Şifre</label>
@@ -70,8 +70,8 @@ function login(e){
   btn.disabled=true;
   btn.innerHTML='<span class="spinner"></span>Giriş yapılıyor...';
   setTimeout(()=>{
-    if(email==='belteye'&&pass==='belteye1'){
-      sessionStorage.setItem('belteye_admin',JSON.stringify({email,name:'Admin',loginTime:new Date().toISOString()}));
+    if(email==='belteye@belteye.com'&&pass==='belteye1'){
+      sessionStorage.setItem('belteye_admin',JSON.stringify({email,name:'BeltEye',loginTime:new Date().toISOString()}));
       btn.style.background='#22c55e';btn.innerHTML='✓ Başarılı';
       setTimeout(()=>window.location.href='index.html',500);
     }else{
