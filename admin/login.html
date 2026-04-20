@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELTEYE Admin — Giriş</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--white:#fff;--blue:#1e3a5f;--blue-light:#2a5080;--blue-dark:#0f1f33;--accent:#3b82f6;--accent-hover:#2563eb;--green:#22c55e;--red:#ef4444;--text:#1e293b;--text2:#64748b;--text3:#94a3b8;--border:#e2e8f0;--shadow:0 1px 3px rgba(0,0,0,0.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--blue-dark);font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,#0f1f33 0%,#1e3a5f 50%,#0f1f33 100%)}
+.login-wrap{width:100%;max-width:400px;padding:20px}
+.logo-area{text-align:center;margin-bottom:36px}
+.logo{font-size:32px;font-weight:900;letter-spacing:6px;color:#fff}
+.logo span{color:var(--text3)}
+.logo-sub{font-size:12px;color:var(--text3);letter-spacing:2px;margin-top:6px}
+.card{background:#fff;border-radius:16px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.card-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
+.card-desc{font-size:13px;color:var(--text2);margin-bottom:28px}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:0.5px}
+.form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+.form-input.err{border-color:var(--red)}
+.err-msg{display:none;font-size:12px;color:var(--red);margin-top:10px;padding:10px 14px;background:#fef2f2;border-radius:8px}
+.err-msg.show{display:block}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,transform .1s;margin-top:6px}
+.btn:hover{background:var(--accent-hover)}
+.btn:active{transform:scale(0.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.footer{text-align:center;margin-top:20px;font-size:11px;color:rgba(255,255,255,0.3)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid transparent;border-top-color:#fff;border-radius:50%;animation:spin .5s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="logo-area">
+    <div class="logo">BELT<span>EYE</span></div>
+    <div class="logo-sub">Yönetim Paneli</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Admin Girişi</div>
+    <div class="card-desc">Yönetim paneline erişmek için giriş yapın</div>
+    <form onsubmit="login(event)">
+      <div class="form-group">
+        <label class="form-label">E-posta</label>
+        <input type="email" id="email" class="form-input" placeholder="admin@belteye.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Şifre</label>
+        <input type="password" id="pass" class="form-input" placeholder="••••••••" required>
+      </div>
+      <div class="err-msg" id="err">E-posta veya şifre hatalı.</div>
+      <button type="submit" class="btn" id="btn">Giriş Yap</button>
+    </form>
+  </div>
+  <div class="footer">© 2026 BeltEye — Tüm hakları saklıdır.</div>
+</div>
+<script>
+function login(e){
+  e.preventDefault();
+  const email=document.getElementById('email').value.trim();
+  const pass=document.getElementById('pass').value;
+  const btn=document.getElementById('btn');
+  const err=document.getElementById('err');
+  err.classList.remove('show');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Giriş yapılıyor...';
+  setTimeout(()=>{
+    if(email==='admin@belteye.com'&&pass==='admin1234'){
+      sessionStorage.setItem('belteye_admin',JSON.stringify({email,name:'Admin',loginTime:new Date().toISOString()}));
+      btn.style.background='#22c55e';btn.innerHTML='✓ Başarılı';
+      setTimeout(()=>window.location.href='index.html',500);
+    }else{
+      err.classList.add('show');btn.disabled=false;btn.innerHTML='Giriş Yap';
+      document.querySelector('.card').style.animation='shake .4s ease';
+      setTimeout(()=>document.querySelector('.card').style.animation='',400);
+    }
+  },600);
+}
+document.getElementById('email').focus();
+</script>
+</body>
+</html>

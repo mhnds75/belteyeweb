@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELTEYE Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f2f5;--white:#fff;--blue:#1e3a5f;--blue-light:#2a5080;--blue-dark:#0f1f33;
+  --accent:#3b82f6;--accent-hover:#2563eb;--green:#22c55e;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --red:#ef4444;--red-bg:#fef2f2;--red-border:#fecaca;
+  --orange:#f59e0b;--orange-bg:#fffbeb;--orange-border:#fde68a;
+  --cyan:#06b6d4;
+  --text:#1e293b;--text2:#64748b;--text3:#94a3b8;--border:#e2e8f0;--border2:#cbd5e1;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);--shadow2:0 4px 12px rgba(0,0,0,0.08);
+  --sidebar-w:260px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);font-family:'Inter',sans-serif;min-height:100vh;color:var(--text)}
+
+/* ─── Sidebar ──────────────────────────── */
+.sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--blue-dark);color:#fff;display:flex;flex-direction:column;z-index:100;
+  transition:transform .3s ease;
+}
+.sidebar-logo{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sidebar-logo .logo{font-size:22px;font-weight:900;letter-spacing:5px}
+.sidebar-logo .logo span{color:var(--text3)}
+.sidebar-logo .sub{font-size:10px;color:var(--text3);letter-spacing:2px;margin-top:4px}
+
+.sidebar-nav{flex:1;padding:16px 0;overflow-y:auto}
+.nav-section{padding:0 16px;margin-bottom:8px;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--text3);text-transform:uppercase}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;
+  color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;transition:all .2s;
+  border-left:3px solid transparent;
+}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:#fff}
+.nav-item.active{background:rgba(59,130,246,0.15);color:#fff;border-left-color:var(--accent)}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.nav-badge{
+  margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:10px;
+}
+
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:var(--text3)}
+.sidebar-footer .admin-name{color:#fff;font-weight:600;font-size:13px}
+
+/* ─── Main ──────────────────────────── */
+.main{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{
+  background:var(--white);border-bottom:1px solid var(--border);padding:14px 32px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;
+}
+.topbar-title{font-size:16px;font-weight:700;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-btn{
+  padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;
+  border:none;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--white);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--bg)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-danger:hover{background:#dc2626}
+.btn-success{background:var(--green);color:#fff}
+.btn-success:hover{background:#16a34a}
+
+.content{flex:1;padding:28px 32px}
+
+/* ─── Stats Row ──────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{
+  background:var(--white);border-radius:12px;padding:20px;border:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;
+}
+.stat-icon{
+  width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.stat-icon.blue{background:rgba(59,130,246,0.1);color:var(--accent)}
+.stat-icon.green{background:rgba(34,197,94,0.1);color:var(--green)}
+.stat-icon.orange{background:rgba(245,158,11,0.1);color:var(--orange)}
+.stat-icon.red{background:rgba(239,68,68,0.1);color:var(--red)}
+.stat-info h3{font-size:22px;font-weight:800;line-height:1}
+.stat-info p{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* ─── Table ──────────────────────────── */
+.table-card{background:var(--white);border-radius:12px;border:1px solid var(--border);overflow:hidden}
+.table-header{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.table-header h2{font-size:15px;font-weight:700}
+.search-box{
+  padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:inherit;outline:none;width:240px;color:var(--text);
+}
+.search-box:focus{border-color:var(--accent)}
+
+table{width:100%;border-collapse:collapse}
+thead th{
+  text-align:left;padding:12px 24px;font-size:11px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;color:var(--text3);background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+tbody td{padding:14px 24px;font-size:13px;border-bottom:1px solid var(--border)}
+tbody tr:hover{background:rgba(59,130,246,0.02)}
+tbody tr:last-child td{border-bottom:none}
+
+.company-cell{display:flex;align-items:center;gap:12px}
+.company-logo{
+  width:36px;height:36px;border-radius:8px;background:var(--bg);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;
+  color:var(--accent);overflow:hidden;flex-shrink:0;
+}
+.company-logo img{width:100%;height:100%;object-fit:cover}
+.company-name{font-weight:600}
+.company-sub{font-size:11px;color:var(--text3)}
+
+.badge{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;
+  font-size:11px;font-weight:600;
+}
+.badge-green{background:var(--green-bg);color:#16a34a;border:1px solid var(--green-border)}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.badge-orange{background:var(--orange-bg);color:#d97706;border:1px solid var(--orange-border)}
+
+.action-btns{display:flex;gap:6px}
+.action-btn{
+  padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);background:var(--white);color:var(--text);font-family:inherit;
+  transition:all .15s;
+}
+.action-btn:hover{background:var(--bg);border-color:var(--border2)}
+.action-btn.preview{color:var(--accent);border-color:rgba(59,130,246,0.3)}
+.action-btn.preview:hover{background:rgba(59,130,246,0.05)}
+.action-btn.delete{color:var(--red);border-color:rgba(239,68,68,0.3)}
+.action-btn.delete:hover{background:rgba(239,68,68,0.05)}
+
+/* ─── Form View ──────────────────────────── */
+.form-card{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:32px;max-width:720px}
+.form-card h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.form-card .desc{font-size:13px;color:var(--text2);margin-bottom:28px}
+
+.form-row{margin-bottom:22px}
+.form-row label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:0.3px}
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row select{
+  width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:14px;font-family:inherit;color:var(--text);outline:none;background:var(--white);
+  transition:border-color .2s;
+}
+.form-row input:focus,.form-row select:focus{border-color:var(--accent)}
+.form-row .hint{font-size:11px;color:var(--text3);margin-top:4px}
+
+.logo-upload{
+  width:100%;padding:24px;border:2px dashed var(--border);border-radius:10px;
+  text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);
+}
+.logo-upload:hover{border-color:var(--accent);background:rgba(59,130,246,0.02)}
+.logo-upload svg{width:32px;height:32px;color:var(--text3);margin-bottom:8px}
+.logo-upload p{font-size:12px;color:var(--text3)}
+.logo-upload .filename{font-size:12px;color:var(--accent);font-weight:600;margin-top:4px}
+.logo-preview{width:64px;height:64px;border-radius:10px;object-fit:cover;margin:0 auto 8px;display:none}
+
+.card-count-selector{display:flex;gap:10px;flex-wrap:wrap}
+.card-opt{
+  padding:10px 20px;border:2px solid var(--border);border-radius:8px;cursor:pointer;
+  font-size:14px;font-weight:600;color:var(--text2);transition:all .2s;text-align:center;min-width:56px;
+}
+.card-opt:hover{border-color:var(--accent);color:var(--accent)}
+.card-opt.selected{border-color:var(--accent);background:rgba(59,130,246,0.06);color:var(--accent)}
+
+.status-toggle{display:flex;gap:10px}
+.status-opt{
+  padding:10px 22px;border:2px solid var(--border);border-radius:8px;cursor:pointer;
+  font-size:13px;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.status-opt.active-opt.selected{border-color:var(--green);background:var(--green-bg);color:#16a34a}
+.status-opt.inactive-opt.selected{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+
+.form-actions{display:flex;gap:10px;margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+
+/* ─── Preview ──────────────────────────── */
+.preview-header{
+  background:var(--blue-dark);padding:20px 28px;border-radius:12px 12px 0 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.preview-header .p-logo{display:flex;align-items:center;gap:12px}
+.preview-header .p-logo img{width:36px;height:36px;border-radius:8px;object-fit:cover}
+.preview-header .p-logo .p-initials{
+  width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.1);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;
+}
+.preview-header .p-name{color:#fff;font-size:16px;font-weight:700}
+.preview-header .p-sub{color:var(--text3);font-size:11px}
+.preview-body{
+  background:var(--bg);padding:24px;border-radius:0 0 12px 12px;border:1px solid var(--border);border-top:none;
+}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.preview-card{
+  background:var(--white);border-radius:10px;padding:18px;border:1px solid var(--border);
+  text-align:center;
+}
+.preview-card .gauge{
+  width:64px;height:64px;border-radius:50%;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;
+  position:relative;
+}
+.preview-card .gauge::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:4px solid var(--border);
+}
+.preview-card .ek-name{font-size:12px;font-weight:700;color:var(--text)}
+.preview-card .ek-status{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* ─── Empty State ──────────────────────────── */
+.empty-state{
+  text-align:center;padding:60px 20px;color:var(--text3);
+}
+.empty-state svg{width:56px;height:56px;margin-bottom:16px;color:var(--border2)}
+.empty-state h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.empty-state p{font-size:13px;margin-bottom:20px}
+
+/* ─── Responsive ──────────────────────────── */
+.mobile-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--blue-dark);color:#fff;
+  border:none;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:18px}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .mobile-toggle{display:block}
+  .content{padding:20px 16px}
+  .topbar{padding:14px 16px}
+  .preview-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+}
+
+/* ─── Animations ──────────────────────────── */
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── Toast ──────────────────────────── */
+.toast{
+  position:fixed;bottom:24px;right:24px;padding:14px 22px;border-radius:10px;
+  color:#fff;font-size:13px;font-weight:600;z-index:9999;opacity:0;
+  transform:translateY(10px);transition:all .3s ease;display:flex;align-items:center;gap:8px;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+
+/* Confirm modal */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;
+  align-items:center;justify-content:center;
+}
+.modal-overlay.show{display:flex}
+.modal-box{
+  background:var(--white);border-radius:14px;padding:28px;max-width:400px;width:90%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.15);
+}
+.modal-box h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.modal-box p{font-size:13px;color:var(--text2);margin-bottom:24px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+</style>
+</head>
+<body>
+
+<!-- Mobile toggle -->
+<button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo">BELT<span>EYE</span></div>
+    <div class="sub">Admin Panel</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section" style="margin-top:8px">Yönetim</div>
+    <div class="nav-item active" data-view="companies" onclick="showView('companies')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+      Firmalar
+      <span class="nav-badge" id="companyCount">0</span>
+    </div>
+    <div class="nav-item" data-view="new-company" onclick="showView('new-company')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+      Yeni Firma
+    </div>
+    <div class="nav-section" style="margin-top:24px">Hızlı Erişim</div>
+    <div class="nav-item" onclick="window.open('/dashboard/','_blank')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="window.open('/','_blank')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      Web Sitesi
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-name" id="adminName">Admin</div>
+    <div style="margin-top:4px">
+      <a href="#" onclick="logout()" style="color:var(--red);text-decoration:none;font-size:12px;font-weight:600">Çıkış Yap</a>
+    </div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Firmalar</div>
+    <div class="topbar-right" id="topbarRight">
+      <button class="topbar-btn btn-primary" onclick="showView('new-company')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+        Yeni Firma
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content" id="contentArea">
+    <!-- Filled by JS -->
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <h3 id="modalTitle">Emin misiniz?</h3>
+    <p id="modalDesc">Bu işlem geri alınamaz.</p>
+    <div class="modal-actions">
+      <button class="topbar-btn btn-secondary" onclick="closeModal()">İptal</button>
+      <button class="topbar-btn btn-danger" id="modalConfirmBtn" onclick="">Sil</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Auth Check ────────────────────────────
+(function(){
+  const s=sessionStorage.getItem('belteye_admin');
+  if(!s){window.location.href='login.html';return;}
+  const admin=JSON.parse(s);
+  document.getElementById('adminName').textContent=admin.name||'Admin';
+})();
+
+function logout(){
+  sessionStorage.removeItem('belteye_admin');
+  window.location.href='login.html';
+}
+
+// ─── Data Layer (localStorage) ─────────────
+const STORAGE_KEY='belteye_companies';
+
+function getCompanies(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}
+  catch{return[];}
+}
+function saveCompanies(list){localStorage.setItem(STORAGE_KEY,JSON.stringify(list));}
+
+function addCompany(c){
+  const list=getCompanies();
+  c.id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  c.createdAt=new Date().toISOString();
+  list.push(c);
+  saveCompanies(list);
+  return c;
+}
+function updateCompany(id,data){
+  const list=getCompanies();
+  const i=list.findIndex(c=>c.id===id);
+  if(i===-1)return null;
+  list[i]={...list[i],...data,updatedAt:new Date().toISOString()};
+  saveCompanies(list);
+  return list[i];
+}
+function deleteCompany(id){
+  const list=getCompanies().filter(c=>c.id!==id);
+  saveCompanies(list);
+}
+
+// ─── View Router ───────────────────────────
+let currentView='companies';
+let editingId=null;
+
+function showView(view,params){
+  currentView=view;
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('active',n.dataset.view===view);
+  });
+
+  const area=document.getElementById('contentArea');
+  const title=document.getElementById('topbarTitle');
+  const right=document.getElementById('topbarRight');
+
+  switch(view){
+    case 'companies':
+      title.textContent='Firmalar';
+      right.innerHTML=`<button class="topbar-btn btn-primary" onclick="showView('new-company')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+        Yeni Firma</button>`;
+      renderCompanies();
+      break;
+    case 'new-company':
+      title.textContent='Yeni Firma Ekle';
+      right.innerHTML=`<button class="topbar-btn btn-secondary" onclick="showView('companies')">← Geri</button>`;
+      editingId=null;
+      renderForm();
+      break;
+    case 'edit-company':
+      title.textContent='Firma Düzenle';
+      right.innerHTML=`<button class="topbar-btn btn-secondary" onclick="showView('companies')">← Geri</button>`;
+      editingId=params?.id||null;
+      renderForm(editingId);
+      break;
+    case 'preview':
+      const comp=getCompanies().find(c=>c.id===params?.id);
+      title.textContent=comp?comp.name+' — Dashboard Önizleme':'Önizleme';
+      right.innerHTML=`<button class="topbar-btn btn-secondary" onclick="showView('companies')">← Geri</button>`;
+      renderPreview(params?.id);
+      break;
+  }
+  updateBadge();
+}
+
+function updateBadge(){
+  document.getElementById('companyCount').textContent=getCompanies().length;
+}
+
+// ─── Companies List ────────────────────────
+function renderCompanies(){
+  const companies=getCompanies();
+  const area=document.getElementById('contentArea');
+
+  const active=companies.filter(c=>c.status==='active').length;
+  const inactive=companies.length-active;
+  const totalCards=companies.reduce((s,c)=>s+(c.cardCount||0),0);
+
+  let html=`<div class="fade-in">
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon blue">🏢</div>
+      <div class="stat-info"><h3>${companies.length}</h3><p>Toplam Firma</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">✓</div>
+      <div class="stat-info"><h3>${active}</h3><p>Aktif</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">✕</div>
+      <div class="stat-info"><h3>${inactive}</h3><p>Pasif</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">▦</div>
+      <div class="stat-info"><h3>${totalCards}</h3><p>Toplam Kart</p></div>
+    </div>
+  </div>`;
+
+  if(companies.length===0){
+    html+=`<div class="table-card">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        <h3>Henüz firma eklenmedi</h3>
+        <p>İlk firmanızı ekleyerek başlayın</p>
+        <button class="topbar-btn btn-primary" onclick="showView('new-company')">+ Yeni Firma Ekle</button>
+      </div>
+    </div>`;
+  } else {
+    html+=`<div class="table-card">
+      <div class="table-header">
+        <h2>Firma Listesi</h2>
+        <input type="text" class="search-box" placeholder="Firma ara..." oninput="filterTable(this.value)">
+      </div>
+      <table>
+        <thead><tr>
+          <th>Firma</th><th>Oluşturma</th><th>Kart</th><th>Durum</th><th style="text-align:right">İşlem</th>
+        </tr></thead>
+        <tbody id="companyTableBody">`;
+
+    companies.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).forEach(c=>{
+      const date=new Date(c.createdAt).toLocaleDateString('tr-TR');
+      const initials=c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const logoHtml=c.logo?
+        `<img src="${c.logo}" alt="${c.name}">`
+        :`${initials}`;
+      const statusBadge=c.status==='active'?
+        `<span class="badge badge-green">● Aktif</span>`
+        :`<span class="badge badge-red">● Pasif</span>`;
+
+      html+=`<tr data-name="${c.name.toLowerCase()}">
+        <td><div class="company-cell">
+          <div class="company-logo">${logoHtml}</div>
+          <div><div class="company-name">${esc(c.name)}</div><div class="company-sub">${c.cardCount} kart</div></div>
+        </div></td>
+        <td>${date}</td>
+        <td><strong>${c.cardCount}</strong></td>
+        <td>${statusBadge}</td>
+        <td><div class="action-btns" style="justify-content:flex-end">
+          <button class="action-btn preview" onclick="showView('preview',{id:'${c.id}'})">Önizle</button>
+          <button class="action-btn" onclick="showView('edit-company',{id:'${c.id}'})">Düzenle</button>
+          <button class="action-btn delete" onclick="confirmDelete('${c.id}','${esc(c.name)}')">Sil</button>
+        </div></td>
+      </tr>`;
+    });
+    html+=`</tbody></table></div>`;
+  }
+  html+=`</div>`;
+  area.innerHTML=html;
+}
+
+function filterTable(q){
+  q=q.toLowerCase();
+  document.querySelectorAll('#companyTableBody tr').forEach(tr=>{
+    tr.style.display=tr.dataset.name.includes(q)?'':'none';
+  });
+}
+
+// ─── Form (Create / Edit) ──────────────────
+let formLogo=null;
+
+function renderForm(editId){
+  const area=document.getElementById('contentArea');
+  const c=editId?getCompanies().find(x=>x.id===editId):null;
+  formLogo=c?.logo||null;
+  const isEdit=!!c;
+
+  const cardOptions=[4,6,8,10,12,16,20];
+  const selectedCards=c?.cardCount||12;
+
+  let html=`<div class="fade-in"><div class="form-card">
+    <h2>${isEdit?'Firma Düzenle':'Yeni Firma Oluştur'}</h2>
+    <div class="desc">${isEdit?'Firma bilgilerini güncelleyin':'Yeni bir firma ekleyin ve dashboard oluşturun'}</div>
+
+    <div class="form-row">
+      <label>Firma Adı</label>
+      <input type="text" id="fName" value="${isEdit?esc(c.name):''}" placeholder="Örn: ABC Madencilik">
+    </div>
+
+    <div class="form-row">
+      <label>Firma Logosu</label>
+      <div class="logo-upload" id="logoUpload" onclick="document.getElementById('logoInput').click()">
+        <img class="logo-preview" id="logoPreview" src="${formLogo||''}" style="${formLogo?'display:block':'display:none'}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" id="logoIcon" style="${formLogo?'display:none':''}"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <p id="logoText">${formLogo?'Değiştirmek için tıklayın':'Logo yüklemek için tıklayın veya sürükleyin'}</p>
+        <div class="filename" id="logoFilename"></div>
+      </div>
+      <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogo(this)">
+      <div class="hint">PNG, JPG — Önerilen: 200×200 px</div>
+    </div>
+
+    <div class="form-row">
+      <label>Dashboard Kart Sayısı (EK Sayısı)</label>
+      <div class="card-count-selector" id="cardSelector">
+        ${cardOptions.map(n=>`<div class="card-opt${n===selectedCards?' selected':''}" onclick="selectCard(this,${n})">${n}</div>`).join('')}
+      </div>
+      <input type="hidden" id="fCardCount" value="${selectedCards}">
+      <div class="hint">Konveyör bant üzerindeki ek (splice) sayısı</div>
+    </div>
+
+    <div class="form-row">
+      <label>Durum</label>
+      <div class="status-toggle">
+        <div class="status-opt active-opt${(!c||c.status==='active')?' selected':''}" onclick="selectStatus(this,'active')">● Aktif</div>
+        <div class="status-opt inactive-opt${(c&&c.status==='inactive')?' selected':''}" onclick="selectStatus(this,'inactive')">● Pasif</div>
+      </div>
+      <input type="hidden" id="fStatus" value="${c?.status||'active'}">
+    </div>
+
+    <div class="form-actions">
+      <button class="topbar-btn btn-primary" onclick="saveForm()">${isEdit?'Güncelle':'Firma Oluştur'}</button>
+      <button class="topbar-btn btn-secondary" onclick="showView('companies')">İptal</button>
+    </div>
+  </div></div>`;
+
+  area.innerHTML=html;
+}
+
+function handleLogo(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    formLogo=e.target.result;
+    document.getElementById('logoPreview').src=formLogo;
+    document.getElementById('logoPreview').style.display='block';
+    document.getElementById('logoIcon').style.display='none';
+    document.getElementById('logoText').textContent='Değiştirmek için tıklayın';
+    document.getElementById('logoFilename').textContent=file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
+function selectCard(el,n){
+  document.querySelectorAll('.card-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('fCardCount').value=n;
+}
+
+function selectStatus(el,status){
+  document.querySelectorAll('.status-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('fStatus').value=status;
+}
+
+function saveForm(){
+  const name=document.getElementById('fName').value.trim();
+  const cardCount=parseInt(document.getElementById('fCardCount').value);
+  const status=document.getElementById('fStatus').value;
+
+  if(!name){toast('Firma adı gerekli','error');return;}
+
+  const data={name,logo:formLogo,cardCount,status};
+
+  if(editingId){
+    updateCompany(editingId,data);
+    toast('Firma güncellendi','success');
+  }else{
+    addCompany(data);
+    toast('Firma oluşturuldu','success');
+  }
+  showView('companies');
+}
+
+// ─── Dashboard Preview ─────────────────────
+function renderPreview(companyId){
+  const c=getCompanies().find(x=>x.id===companyId);
+  if(!c){showView('companies');return;}
+
+  const area=document.getElementById('contentArea');
+  const initials=c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  // Generate mock EK data
+  const eks=[];
+  for(let i=1;i<=c.cardCount;i++){
+    const score=Math.floor(Math.random()*60)+40;
+    const statusLabel=score>=70?'Sağlıklı':score>=50?'Dikkat':'Kritik';
+    const color=score>=70?'var(--green)':score>=50?'var(--orange)':'var(--red)';
+    eks.push({name:`EK-${String(i).padStart(2,'0')}`,score,statusLabel,color});
+  }
+
+  let html=`<div class="fade-in">
+    <div style="margin-bottom:20px">
+      <div class="preview-header">
+        <div class="p-logo">
+          ${c.logo?`<img src="${c.logo}">`:`<div class="p-initials">${initials}</div>`}
+          <div>
+            <div class="p-name">${esc(c.name)}</div>
+            <div class="p-sub">${c.cardCount} EK — Dashboard Önizleme</div>
+          </div>
+        </div>
+        <span style="color:var(--text3);font-size:12px">${c.status==='active'?'🟢 Aktif':'🔴 Pasif'}</span>
+      </div>
+      <div class="preview-body">
+        <div class="preview-grid">`;
+
+  eks.forEach(ek=>{
+    const pct=(ek.score/100)*283;
+    html+=`<div class="preview-card">
+      <div style="position:relative;width:68px;height:68px;margin:0 auto 10px">
+        <svg width="68" height="68" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" stroke-width="6"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="${ek.color}" stroke-width="6"
+            stroke-dasharray="${pct} 283" stroke-dashoffset="0" stroke-linecap="round"
+            transform="rotate(-90 50 50)"/>
+          <text x="50" y="54" text-anchor="middle" font-size="20" font-weight="800" fill="${ek.color}">${ek.score}</text>
+        </svg>
+      </div>
+      <div class="ek-name">${ek.name}</div>
+      <div class="ek-status" style="color:${ek.color}">${ek.statusLabel}</div>
+    </div>`;
+  });
+
+  html+=`</div></div></div>
+    <div style="margin-top:16px;text-align:center">
+      <p style="font-size:12px;color:var(--text3)">Bu bir önizlemedir. Gerçek veriler cihazlar bağlandığında görünür.</p>
+    </div>
+  </div>`;
+
+  area.innerHTML=html;
+}
+
+// ─── Helpers ───────────────────────────────
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+type;
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function confirmDelete(id,name){
+  const modal=document.getElementById('confirmModal');
+  document.getElementById('modalTitle').textContent='Firma Silinecek';
+  document.getElementById('modalDesc').textContent=`"${name}" firmasını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+  document.getElementById('modalConfirmBtn').onclick=function(){
+    deleteCompany(id);
+    closeModal();
+    toast('Firma silindi','success');
+    showView('companies');
+  };
+  modal.classList.add('show');
+}
+function closeModal(){document.getElementById('confirmModal').classList.remove('show');}
+
+// ─── Init ──────────────────────────────────
+showView('companies');
+</script>
+</body>
+</html>
