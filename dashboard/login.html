@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELTEYE — Giriş</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b1120;
+  --bg2: #111827;
+  --card: #1a2740;
+  --border: #243046;
+  --cyan: #06b6d4;
+  --green: #22c55e;
+  --red: #ef4444;
+  --orange: #f59e0b;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --white: #ffffff;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+
+/* Background animation */
+body::before {
+  content:''; position:fixed; top:-50%; left:-50%; width:200%; height:200%;
+  background:radial-gradient(ellipse at 30% 20%, rgba(6,182,212,0.06) 0%, transparent 50%),
+             radial-gradient(ellipse at 70% 80%, rgba(245,158,11,0.04) 0%, transparent 50%);
+  animation:drift 20s ease-in-out infinite;
+  pointer-events:none; z-index:0;
+}
+@keyframes drift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,20px)} }
+
+.login-container {
+  position:relative; z-index:1; width:100%; max-width:420px; padding:20px;
+}
+
+.logo-section {
+  text-align:center; margin-bottom:40px;
+}
+.logo {
+  font-size:36px; font-weight:900; letter-spacing:8px;
+}
+.logo .belt { color:var(--white); }
+.logo .eye { color:var(--text3); }
+.logo-sub {
+  font-size:12px; color:var(--text3); letter-spacing:3px;
+  margin-top:8px; text-transform:uppercase;
+}
+
+.login-card {
+  background:var(--card); border-radius:16px; padding:36px;
+  border:1px solid var(--border);
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+
+.login-title {
+  font-size:18px; font-weight:700; margin-bottom:6px;
+}
+.login-desc {
+  font-size:13px; color:var(--text3); margin-bottom:28px;
+}
+
+.form-group { margin-bottom:20px; }
+.form-label {
+  display:block; font-size:11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--text3); margin-bottom:8px;
+}
+.form-input {
+  width:100%; background:var(--bg2); border:1px solid var(--border);
+  color:var(--text); border-radius:10px; padding:14px 16px;
+  font-family:inherit; font-size:14px; outline:none;
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(6,182,212,0.15);
+}
+.form-input::placeholder { color:var(--text3); }
+.form-input.error { border-color:var(--red); }
+
+.error-msg {
+  display:none; font-size:12px; color:var(--red);
+  margin-top:8px; padding:8px 12px;
+  background:rgba(239,68,68,0.1); border-radius:6px;
+}
+.error-msg.show { display:block; }
+
+.login-btn {
+  width:100%; padding:14px; border:none; border-radius:10px;
+  background:var(--cyan); color:var(--bg); font-size:14px;
+  font-weight:700; cursor:pointer; font-family:inherit;
+  letter-spacing:0.5px; transition:all 0.2s;
+  margin-top:8px;
+}
+.login-btn:hover { background:#0891b2; transform:translateY(-1px); }
+.login-btn:active { transform:translateY(0); }
+.login-btn:disabled {
+  opacity:0.5; cursor:not-allowed; transform:none;
+}
+
+.login-footer {
+  text-align:center; margin-top:24px; font-size:12px; color:var(--text3);
+}
+.login-footer a {
+  color:var(--cyan); text-decoration:none;
+}
+.login-footer a:hover { text-decoration:underline; }
+
+/* Spinner */
+.spinner {
+  display:inline-block; width:16px; height:16px;
+  border:2px solid transparent; border-top-color:var(--bg);
+  border-radius:50%; animation:spin 0.6s linear infinite;
+  vertical-align:middle; margin-right:6px;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Status indicator */
+.status-bar {
+  display:flex; align-items:center; justify-content:center;
+  gap:8px; margin-top:20px; font-size:11px; color:var(--text3);
+}
+.status-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--green); box-shadow:0 0 6px var(--green);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="logo-section">
+    <div class="logo"><span class="belt">BELT</span><span class="eye">EYE</span></div>
+    <div class="logo-sub">Konveyör Bant İzleme Sistemi</div>
+  </div>
+
+  <div class="login-card">
+    <div class="login-title">Dashboard Girişi</div>
+    <div class="login-desc">İzleme paneline erişmek için giriş yapın</div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">E-POSTA</label>
+        <input type="email" id="email" class="form-input" placeholder="ornek@belteye.com" autocomplete="email" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ŞİFRE</label>
+        <input type="password" id="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+
+      <div class="error-msg" id="errorMsg">E-posta veya şifre hatalı. Lütfen tekrar deneyin.</div>
+
+      <button type="submit" class="login-btn" id="loginBtn">Giriş Yap</button>
+    </form>
+
+    <div class="login-footer">
+      <a href="../belteye-website-son.html">← Ana sayfaya dön</a>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    Sistem aktif
+  </div>
+</div>
+
+<script>
+// ─── Demo Credentials ─────────────────────────────────────
+const VALID_USERS = [
+  { email: 'demo@belteye.com', password: 'demo1234', name: 'Demo-Kullanıcı', role: 'Operatör / Admin' }
+];
+
+function handleLogin(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('loginBtn');
+  const errorMsg = document.getElementById('errorMsg');
+
+  // Reset
+  errorMsg.classList.remove('show');
+  document.getElementById('email').classList.remove('error');
+  document.getElementById('password').classList.remove('error');
+
+  // Loading state
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Giriş yapılıyor...';
+
+  // Simulate network delay
+  setTimeout(() => {
+    const user = VALID_USERS.find(u => u.email === email && u.password === password);
+
+    if (user) {
+      // Save session
+      sessionStorage.setItem('belteye_user', JSON.stringify({
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        loginTime: new Date().toISOString()
+      }));
+
+      // Success animation
+      btn.style.background = '#22c55e';
+      btn.innerHTML = '✓ Giriş başarılı';
+
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 600);
+
+    } else {
+      // Error
+      errorMsg.classList.add('show');
+      document.getElementById('email').classList.add('error');
+      document.getElementById('password').classList.add('error');
+      btn.disabled = false;
+      btn.innerHTML = 'Giriş Yap';
+
+      // Shake animation
+      const card = document.querySelector('.login-card');
+      card.style.animation = 'shake 0.4s ease';
+      setTimeout(() => card.style.animation = '', 400);
+    }
+  }, 800);
+}
+
+// Shake keyframes
+const style = document.createElement('style');
+style.textContent = `@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}`;
+document.head.appendChild(style);
+
+// Auto-focus email
+document.getElementById('email').focus();
+</script>
+</body>
+</html>

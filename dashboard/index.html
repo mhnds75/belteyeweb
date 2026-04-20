@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELTEYE — Konveyör Bant İzleme Sistemi</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════ RESET & VARIABLES ═══════════════════ */
+:root {
+  --bg: #0b1120;
+  --bg2: #111827;
+  --bg3: #1a2332;
+  --panel: #151f2e;
+  --card: #1a2740;
+  --border: #243046;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.15);
+  --orange: #f59e0b;
+  --orange-dim: rgba(245,158,11,0.15);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.15);
+  --cyan: #06b6d4;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --white: #ffffff;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+
+/* ═══════════════════ HEADER ═══════════════════ */
+header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px; height:56px; background:var(--bg2);
+  border-bottom:1px solid var(--border);
+}
+.header-left { display:flex; align-items:center; gap:16px; }
+.back-btn { color:var(--text2); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:6px; }
+.back-btn:hover { color:var(--white); }
+.conveyor-name { font-size:14px; font-weight:600; color:var(--text); }
+
+.header-center { font-size:20px; font-weight:800; letter-spacing:6px; }
+.header-center .belt { color:var(--white); }
+.header-center .eye { color:var(--text3); }
+
+.header-right { display:flex; align-items:center; gap:20px; }
+.user-info { text-align:right; font-size:12px; line-height:1.4; }
+.user-name { font-weight:600; color:var(--text); }
+.user-role { color:var(--text3); }
+.avatar {
+  width:36px; height:36px; border-radius:50%; background:var(--card);
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.controls { display:flex; flex-direction:column; gap:4px; }
+.ctrl-btn {
+  padding:4px 14px; border:none; border-radius:4px; font-size:11px;
+  font-weight:700; cursor:pointer; font-family:inherit; letter-spacing:0.5px;
+}
+.ctrl-start { background:#22c55e; color:#000; }
+.ctrl-stop { background:var(--card); color:var(--text2); border:1px solid var(--border); }
+.status-dot { display:flex; align-items:center; gap:6px; font-size:10px; font-weight:600; }
+.status-dot .dot { width:8px; height:8px; border-radius:50%; }
+.dot-green { background:var(--green); box-shadow:0 0 6px var(--green); }
+.dot-red { background:var(--red); box-shadow:0 0 6px var(--red); }
+
+/* ═══════════════════ MAIN LAYOUT ═══════════════════ */
+.main { padding:20px 24px; display:flex; flex-direction:column; gap:20px; }
+
+/* ═══════════════════ SECTION TITLE ═══════════════════ */
+.section-title {
+  font-size:11px; font-weight:700; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text3); margin-bottom:12px;
+}
+
+/* ═══════════════════ GAUGE ROW ═══════════════════ */
+.gauge-row {
+  display:grid; grid-template-columns:repeat(12, 1fr); gap:12px;
+  background:var(--panel); border-radius:12px; padding:20px 16px;
+  border:1px solid var(--border);
+}
+.gauge-item { display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; transition:transform 0.2s; }
+.gauge-item:hover { transform:scale(1.08); }
+.gauge-svg { width:80px; height:80px; }
+.gauge-bg { fill:none; stroke:var(--bg); stroke-width:6; }
+.gauge-fill { fill:none; stroke-width:6; stroke-linecap:round;
+  transition:stroke-dashoffset 1s ease; }
+.gauge-text { font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; fill:var(--white); text-anchor:middle; dominant-baseline:central; }
+.gauge-label { font-size:11px; font-weight:600; color:var(--text2); letter-spacing:1px; }
+
+/* ═══════════════════ CONTENT GRID ═══════════════════ */
+.content-grid {
+  display:grid; grid-template-columns:1fr 340px; gap:20px;
+}
+
+/* ═══════════════════ HEALTH CARDS ═══════════════════ */
+.health-grid {
+  display:grid; grid-template-columns:repeat(4, 1fr); gap:12px;
+}
+.health-card {
+  background:var(--card); border-radius:10px; padding:16px;
+  border:1px solid var(--border); position:relative;
+  cursor:pointer; transition:transform 0.2s, border-color 0.2s;
+}
+.health-card:hover { transform:translateY(-2px); border-color:var(--cyan); }
+.health-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.health-card-name { font-size:13px; font-weight:700; color:var(--text); }
+.health-badge {
+  font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px;
+  letter-spacing:0.5px; text-transform:lowercase;
+}
+.badge-normal { background:var(--green-dim); color:var(--green); }
+.badge-risky { background:var(--orange-dim); color:var(--orange); }
+.badge-critical { background:var(--red-dim); color:var(--red); }
+
+.health-chart { height:50px; margin-bottom:8px; }
+.health-chart canvas { width:100% !important; height:50px !important; }
+
+.health-score { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:800; }
+.health-score .pct { font-size:16px; font-weight:500; }
+
+/* ═══════════════════ RIGHT PANEL ═══════════════════ */
+.right-panel { display:flex; flex-direction:column; gap:16px; }
+
+/* ─── Active Alarm ─── */
+.alarm-panel {
+  background:var(--card); border-radius:10px; padding:20px;
+  border:1px solid var(--border);
+}
+.alarm-header { display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+.alarm-dot { width:10px; height:10px; border-radius:50%; background:var(--red);
+  box-shadow:0 0 8px var(--red); animation:blink 1.5s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.alarm-title { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--text3); }
+
+.alarm-row { display:flex; justify-content:space-between; padding:10px 0;
+  border-bottom:1px solid var(--border); font-size:13px; }
+.alarm-row:last-child { border:none; }
+.alarm-key { color:var(--text3); }
+.alarm-val { font-weight:600; color:var(--text); }
+.alarm-val.high { color:var(--red); font-weight:700; }
+.alarm-val.risky { color:var(--orange); font-weight:700; }
+.alarm-val.ek-badge {
+  background:var(--green-dim); color:var(--green); padding:2px 10px;
+  border-radius:4px; font-size:12px; font-weight:700;
+}
+.alarm-val.plc-yes {
+  background:var(--green); color:#000; padding:2px 10px;
+  border-radius:4px; font-size:11px; font-weight:800;
+}
+
+/* ─── Recent Alarms ─── */
+.recent-alarms {
+  background:var(--card); border-radius:10px; padding:20px;
+  border:1px solid var(--border); flex:1; overflow:hidden;
+}
+.recent-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.recent-count { font-size:12px; color:var(--text3); }
+.recent-list { display:flex; flex-direction:column; gap:2px; max-height:320px; overflow-y:auto; }
+.recent-item {
+  display:grid; grid-template-columns:60px 50px 1fr; gap:10px;
+  padding:8px 10px; border-radius:6px; font-size:12px; align-items:center;
+  background:rgba(255,255,255,0.02);
+}
+.recent-item:hover { background:rgba(255,255,255,0.05); }
+.recent-time { font-family:'JetBrains Mono',monospace; color:var(--text3); font-size:11px; }
+.recent-ek { font-weight:700; color:var(--text); }
+.recent-type { display:flex; align-items:center; gap:6px; }
+.recent-type .dot { width:6px; height:6px; border-radius:50%; background:var(--red); flex-shrink:0; }
+.recent-type span { color:var(--orange); font-weight:600; }
+
+/* ═══════════════════ LOGO BAR ═══════════════════ */
+.logo-bar {
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;
+  margin-top:8px;
+}
+.logo-box {
+  background:var(--panel); border-radius:10px; padding:20px;
+  border:1px solid var(--border); display:flex; align-items:center;
+  justify-content:center; height:80px;
+}
+.logo-box .logo-text { font-size:22px; font-weight:800; letter-spacing:4px; }
+.logo-imbat { color:var(--cyan); font-size:18px; font-weight:700; }
+.logo-vemend { color:var(--orange); font-size:22px; font-weight:800; letter-spacing:6px; }
+.logo-belteye .belt { color:var(--white); }
+.logo-belteye .eye { color:var(--text3); }
+
+/* ═══════════════════ SCROLLBAR ═══════════════════ */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+/* ═══════════════════ RESPONSIVE ═══════════════════ */
+@media (max-width:1400px) {
+  .gauge-row { grid-template-columns:repeat(6, 1fr); }
+  .health-grid { grid-template-columns:repeat(3, 1fr); }
+}
+@media (max-width:1024px) {
+  .content-grid { grid-template-columns:1fr; }
+  .health-grid { grid-template-columns:repeat(2, 1fr); }
+  .gauge-row { grid-template-columns:repeat(4, 1fr); }
+}
+@media (max-width:640px) {
+  .gauge-row { grid-template-columns:repeat(3, 1fr); }
+  .health-grid { grid-template-columns:1fr; }
+  .logo-bar { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="header-left">
+    <a href="#" class="back-btn">← <span class="conveyor-name">Konveyör Hattı - 01</span></a>
+  </div>
+  <div class="header-center">
+    <span class="belt">BELT</span><span class="eye">EYE</span>
+  </div>
+  <div class="header-right">
+    <div class="user-info">
+      <div class="user-name">Demo-Kullanıcı</div>
+      <div class="user-role">Operatör / Admin</div>
+    </div>
+    <div class="avatar">👤</div>
+    <div class="controls">
+      <button class="ctrl-btn ctrl-start" onclick="toggleSystem()">BAŞLAT</button>
+      <button class="ctrl-btn ctrl-stop" onclick="toggleSystem()">DURDUR</button>
+    </div>
+    <div>
+      <div class="status-dot"><div class="dot dot-green"></div> ÇALIŞIYOR</div>
+      <div class="status-dot" style="margin-top:2px"><div class="dot dot-red"></div> DURUYOR</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+<div class="main">
+
+  <!-- ─── Gauge Row ─── -->
+  <div>
+    <div class="section-title">EK SAĞLIĞI</div>
+    <div class="gauge-row" id="gaugeRow"></div>
+  </div>
+
+  <!-- ─── Content Grid ─── -->
+  <div class="content-grid">
+
+    <!-- Left: Health Cards -->
+    <div>
+      <div class="section-title">EK SAĞLIĞI</div>
+      <div class="health-grid" id="healthGrid"></div>
+    </div>
+
+    <!-- Right: Alarm Panels -->
+    <div class="right-panel">
+
+      <!-- Active Alarm -->
+      <div class="alarm-panel">
+        <div class="alarm-header">
+          <div class="alarm-dot"></div>
+          <div class="alarm-title">AKTİF ALARM</div>
+        </div>
+        <div id="activeAlarm"></div>
+      </div>
+
+      <!-- Recent Alarms -->
+      <div class="recent-alarms">
+        <div class="recent-header">
+          <div class="alarm-title">SON AKTİF ALARMLAR</div>
+          <div class="recent-count" id="alarmCount"></div>
+        </div>
+        <div class="recent-list" id="recentAlarms"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── Logo Bar ─── -->
+  <div class="logo-bar" style="grid-template-columns:repeat(2, 1fr);">
+    <div class="logo-box">
+      <span class="logo-vemend">VEMEND</span>
+    </div>
+    <div class="logo-box">
+      <span class="logo-text logo-belteye"><span class="belt">BELT</span><span class="eye">EYE</span></span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+// ─── Mock Data ───────────────────────────────────────────
+const SPLICES = [
+  { id:'EK-01', score:81, status:'normal', trend:[74,76,78,79,80,81] },
+  { id:'EK-02', score:47, status:'riskli', trend:[55,52,50,48,47,47] },
+  { id:'EK-03', score:52, status:'riskli', trend:[60,58,55,54,53,52] },
+  { id:'EK-04', score:69, status:'normal', trend:[65,66,67,68,68,69] },
+  { id:'EK-05', score:91, status:'normal', trend:[88,89,90,90,91,91] },
+  { id:'EK-06', score:96, status:'normal', trend:[93,94,95,95,96,96] },
+  { id:'EK-07', score:85, status:'normal', trend:[82,83,83,84,85,85] },
+  { id:'EK-08', score:58, status:'riskli', trend:[65,63,61,60,59,58] },
+  { id:'EK-09', score:82, status:'normal', trend:[78,79,80,81,81,82] },
+  { id:'EK-10', score:66, status:'normal', trend:[62,63,64,65,65,66] },
+  { id:'EK-11', score:55, status:'riskli', trend:[62,60,58,57,56,55] },
+  { id:'EK-12', score:75, status:'normal', trend:[71,72,73,74,74,75] },
+];
+
+const ACTIVE_ALARM = {
+  type: 'Çatlak Tespiti',
+  camera: 'Arka',
+  splice: 'EK-11',
+  severity: 'YÜKSEK',
+  status: 'RİSKLİ',
+  plc: 'EVET'
+};
+
+const RECENT_ALARMS = [
+  { time:'10:57:25', ek:'EK-11', type:'Çatlak Tespiti' },
+  { time:'10:53:57', ek:'EK-03', type:'Titreşim Anomalisi' },
+  { time:'10:53:24', ek:'EK-04', type:'Kayma Alarmı' },
+  { time:'10:51:31', ek:'EK-08', type:'Ani Skor Düşüşü' },
+  { time:'10:47:17', ek:'EK-10', type:'Çatlak Tespiti' },
+  { time:'10:41:27', ek:'EK-02', type:'Titreşim Anomalisi' },
+  { time:'10:40:30', ek:'EK-02', type:'Çatlak Tespiti' },
+  { time:'10:39:05', ek:'EK-03', type:'Çatlak Tespiti' },
+];
+
+// ─── Color Helpers ────────────────────────────────────────
+function scoreColor(score) {
+  if (score >= 80) return 'var(--green)';
+  if (score >= 60) return 'var(--orange)';
+  return 'var(--red)';
+}
+function statusBadge(s) {
+  if (s === 'normal')  return '<span class="health-badge badge-normal">normal</span>';
+  if (s === 'riskli')  return '<span class="health-badge badge-risky">riskli</span>';
+  return '<span class="health-badge badge-critical">kritik</span>';
+}
+
+// ─── Circular Gauge SVG ──────────────────────────────────
+function createGauge(sp) {
+  const r = 34, C = 2 * Math.PI * r;
+  const offset = C - (sp.score / 100) * C;
+  const color = scoreColor(sp.score);
+  return `
+    <div class="gauge-item" onclick="openJoint('${sp.id}')">
+      <svg class="gauge-svg" viewBox="0 0 80 80">
+        <circle class="gauge-bg" cx="40" cy="40" r="${r}" />
+        <circle class="gauge-fill" cx="40" cy="40" r="${r}"
+          stroke="${color}"
+          stroke-dasharray="${C}"
+          stroke-dashoffset="${offset}"
+          transform="rotate(-90 40 40)" />
+        <text class="gauge-text" x="40" y="40" fill="${color}">${sp.score}</text>
+      </svg>
+      <span class="gauge-label">${sp.id}</span>
+    </div>`;
+}
+
+// ─── Render Gauges ────────────────────────────────────────
+document.getElementById('gaugeRow').innerHTML = SPLICES.map(createGauge).join('');
+
+// ─── Health Cards ─────────────────────────────────────────
+function openJoint(ekId) {
+  window.location.href = 'joint.html?ek=' + ekId;
+}
+
+function createHealthCard(sp, idx) {
+  const color = scoreColor(sp.score);
+  return `
+    <div class="health-card" onclick="openJoint('${sp.id}')">
+      <div class="health-card-header">
+        <span class="health-card-name">${sp.id}</span>
+        ${statusBadge(sp.status)}
+      </div>
+      <div class="health-chart"><canvas id="chart${idx}"></canvas></div>
+      <div class="health-score" style="color:${color}">
+        ${sp.score}<span class="pct">%</span>
+      </div>
+    </div>`;
+}
+document.getElementById('healthGrid').innerHTML = SPLICES.map(createHealthCard).join('');
+
+// ─── Mini Charts ──────────────────────────────────────────
+SPLICES.forEach((sp, idx) => {
+  const canvas = document.getElementById(`chart${idx}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 50 * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width, h = 50;
+  const data = sp.trend;
+  const min = Math.min(...data) - 5, max = Math.max(...data) + 5;
+  const points = data.map((v, i) => ({
+    x: (i / (data.length - 1)) * w,
+    y: h - ((v - min) / (max - min)) * h
+  }));
+
+  // Line
+  const color = scoreColor(sp.score);
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    const xc = (points[i-1].x + points[i].x) / 2;
+    const yc = (points[i-1].y + points[i].y) / 2;
+    ctx.quadraticCurveTo(points[i-1].x, points[i-1].y, xc, yc);
+  }
+  ctx.quadraticCurveTo(points[points.length-1].x, points[points.length-1].y, points[points.length-1].x, points[points.length-1].y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Dots
+  points.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, i === points.length - 1 ? 4 : 2, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  });
+});
+
+// ─── Active Alarm ─────────────────────────────────────────
+document.getElementById('activeAlarm').innerHTML = `
+  <div class="alarm-row"><span class="alarm-key">Alarm Tipi</span><span class="alarm-val">${ACTIVE_ALARM.type}</span></div>
+  <div class="alarm-row"><span class="alarm-key">Kamera</span><span class="alarm-val">${ACTIVE_ALARM.camera}</span></div>
+  <div class="alarm-row"><span class="alarm-key">Ek</span><span class="alarm-val ek-badge">${ACTIVE_ALARM.splice}</span></div>
+  <div class="alarm-row"><span class="alarm-key">Şiddet</span><span class="alarm-val high">${ACTIVE_ALARM.severity}</span></div>
+  <div class="alarm-row"><span class="alarm-key">Genel Durum</span><span class="alarm-val risky">${ACTIVE_ALARM.status}</span></div>
+  <div class="alarm-row"><span class="alarm-key">PLC Tetiklendi</span><span class="alarm-val plc-yes">${ACTIVE_ALARM.plc}</span></div>
+`;
+
+// ─── Recent Alarms ────────────────────────────────────────
+document.getElementById('alarmCount').textContent = `${RECENT_ALARMS.length} alarm`;
+document.getElementById('recentAlarms').innerHTML = RECENT_ALARMS.map(a => `
+  <div class="recent-item">
+    <span class="recent-time">${a.time}</span>
+    <span class="recent-ek">${a.ek}</span>
+    <span class="recent-type"><span class="dot"></span><span>${a.type}</span></span>
+  </div>
+`).join('');
+
+// ─── System Toggle (demo) ─────────────────────────────────
+function toggleSystem() {
+  // placeholder for real Socket.IO integration
+}
+</script>
+</body>
+</html>

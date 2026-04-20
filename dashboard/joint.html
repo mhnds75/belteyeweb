@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELTEYE — Ek Detay</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════ VARIABLES ═══════════════════ */
+:root {
+  --bg: #0b1120;
+  --bg2: #111827;
+  --bg3: #1a2332;
+  --panel: #151f2e;
+  --card: #1a2740;
+  --card2: #1e2d42;
+  --border: #243046;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.15);
+  --orange: #f59e0b;
+  --orange-dim: rgba(245,158,11,0.15);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.15);
+  --cyan: #06b6d4;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --white: #ffffff;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+/* ═══════════════════ HEADER ═══════════════════ */
+header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px; height:56px; background:var(--bg2);
+  border-bottom:1px solid var(--border);
+}
+.header-left { display:flex; align-items:center; gap:16px; }
+.back-btn {
+  color:var(--text2); text-decoration:none; font-size:14px;
+  display:flex; align-items:center; gap:6px; transition:color 0.2s;
+}
+.back-btn:hover { color:var(--white); }
+.ek-name { font-size:16px; font-weight:700; color:var(--cyan); }
+
+.header-center { display:flex; align-items:center; gap:12px; }
+.status-pill {
+  font-size:12px; font-weight:700; padding:4px 14px; border-radius:20px;
+  letter-spacing:0.5px;
+}
+.pill-normal { background:var(--green-dim); color:var(--green); }
+.pill-risky { background:var(--orange-dim); color:var(--orange); }
+.pill-critical { background:var(--red-dim); color:var(--red); }
+.header-score { font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:800; }
+
+.header-right { display:flex; align-items:center; gap:12px; }
+.user-info { text-align:right; font-size:12px; line-height:1.4; }
+.user-name { font-weight:600; color:var(--text); }
+.user-role { color:var(--text3); }
+.avatar {
+  width:36px; height:36px; border-radius:50%; background:var(--card);
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+
+/* ═══════════════════ MAIN ═══════════════════ */
+.main { padding:24px; display:flex; flex-direction:column; gap:20px; max-width:1400px; margin:0 auto; }
+
+/* ═══════════════════ TOP ROW ═══════════════════ */
+.top-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; }
+.top-card {
+  background:var(--card); border-radius:12px; padding:24px;
+  border:1px solid var(--border);
+}
+
+/* Gauge Card */
+.gauge-card { display:flex; align-items:center; justify-content:center; }
+.gauge-lg { width:140px; height:140px; }
+.gauge-bg-lg { fill:none; stroke:var(--bg); stroke-width:8; }
+.gauge-fill-lg { fill:none; stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset 1s ease; }
+.gauge-text-lg { font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:800; fill:var(--white); text-anchor:middle; }
+.gauge-pct { font-family:'JetBrains Mono',monospace; font-size:14px; fill:var(--text3); text-anchor:middle; }
+
+/* Score Card */
+.score-label { font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:8px; }
+.score-big { font-family:'JetBrains Mono',monospace; font-size:42px; font-weight:800; }
+.score-sub { font-size:14px; color:var(--text3); margin-top:2px; }
+
+/* Info Card */
+.info-row { margin-bottom:16px; }
+.info-row:last-child { margin-bottom:0; }
+.info-label { font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:4px; }
+.info-value { font-size:18px; font-weight:700; }
+.info-value.orange { color:var(--orange); }
+.info-value.red { color:var(--red); }
+.info-value.green { color:var(--green); }
+
+/* Risk Card */
+.alarm-count { font-family:'JetBrains Mono',monospace; font-size:42px; font-weight:800; color:var(--cyan); }
+
+/* ═══════════════════ AI ANALYSIS + OPERATOR ═══════════════════ */
+.mid-row { display:grid; grid-template-columns:1fr 380px; gap:16px; }
+
+.ai-panel {
+  background:var(--card); border-radius:12px; padding:24px;
+  border:1px solid var(--border);
+}
+.ai-header { display:flex; align-items:center; gap:8px; margin-bottom:16px; font-size:14px; font-weight:600; }
+.ai-icon { font-size:18px; }
+.ai-body {
+  background:var(--bg2); border-radius:8px; padding:16px; font-size:13px;
+  line-height:1.7; color:var(--text2); border-left:3px solid var(--orange);
+  margin-bottom:16px;
+}
+.ai-body strong { color:var(--orange); font-weight:700; }
+.ai-footer { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.ai-footer-item {
+  background:var(--bg2); border-radius:8px; padding:14px;
+}
+.ai-footer-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:6px; }
+.ai-footer-value { font-size:13px; font-weight:500; color:var(--text); }
+
+/* Operator Panel */
+.operator-panel {
+  background:var(--card); border-radius:12px; padding:24px;
+  border:1px solid var(--border);
+}
+.op-title { font-size:14px; font-weight:700; margin-bottom:16px; padding-left:10px; border-left:3px solid var(--cyan); }
+
+.sys-data {
+  background:var(--bg2); border-radius:8px; padding:14px; margin-bottom:16px;
+  font-size:12px;
+}
+.sys-data-title { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:8px; }
+.sys-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.sys-item { display:flex; gap:6px; }
+.sys-key { color:var(--text3); }
+.sys-val { font-weight:600; }
+.sys-val.orange { color:var(--orange); }
+.sys-val.red { color:var(--red); }
+.sys-val.green { color:var(--green); }
+
+.form-group { margin-bottom:14px; }
+.form-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:6px; }
+select, input, textarea {
+  width:100%; background:var(--bg2); border:1px solid var(--border); color:var(--text);
+  border-radius:6px; padding:10px 12px; font-family:inherit; font-size:13px;
+  outline:none; transition:border-color 0.2s;
+}
+select:focus, input:focus, textarea:focus { border-color:var(--cyan); }
+textarea { resize:vertical; min-height:70px; }
+
+.risk-buttons { display:flex; gap:8px; }
+.risk-btn {
+  flex:1; padding:8px; border:1px solid var(--border); background:var(--bg2);
+  color:var(--text3); border-radius:6px; font-size:12px; font-weight:600;
+  cursor:pointer; text-align:center; transition:all 0.2s;
+}
+.risk-btn:hover { border-color:var(--text2); color:var(--text); }
+.risk-btn.active-low { background:var(--green-dim); border-color:var(--green); color:var(--green); }
+.risk-btn.active-mid { background:var(--orange-dim); border-color:var(--orange); color:var(--orange); }
+.risk-btn.active-high { background:var(--red-dim); border-color:var(--red); color:var(--red); }
+.risk-btn.active-crit { background:rgba(139,0,0,0.2); border-color:#dc2626; color:#dc2626; }
+
+.btn-row { display:flex; gap:10px; margin-top:16px; }
+.btn {
+  flex:1; padding:10px; border:none; border-radius:8px; font-size:13px;
+  font-weight:700; cursor:pointer; font-family:inherit; transition:opacity 0.2s;
+}
+.btn:hover { opacity:0.85; }
+.btn-save { background:var(--card2); color:var(--text); border:1px solid var(--border); }
+.btn-approve { background:var(--green); color:#000; }
+
+/* ═══════════════════ CHART ═══════════════════ */
+.chart-panel {
+  background:var(--card); border-radius:12px; padding:24px;
+  border:1px solid var(--border);
+}
+.chart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.chart-title { font-size:14px; font-weight:700; }
+.chart-legend { display:flex; gap:16px; font-size:11px; color:var(--text3); }
+.legend-item { display:flex; align-items:center; gap:6px; }
+.legend-line { width:20px; height:2px; }
+.legend-dash { width:20px; height:0; border-top:2px dashed; }
+.chart-canvas-wrap { position:relative; height:200px; }
+#historyChart { width:100%; height:200px; }
+
+/* ═══════════════════ IMAGES ═══════════════════ */
+.images-panel {
+  background:var(--card); border-radius:12px; padding:24px;
+  border:1px solid var(--border);
+}
+.images-title { font-size:14px; font-weight:700; margin-bottom:16px; padding-left:10px; border-left:3px solid var(--cyan); }
+.images-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; }
+.img-placeholder {
+  background:var(--bg2); border-radius:8px; aspect-ratio:4/3;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:1px solid var(--border); color:var(--text3); font-size:11px; gap:6px;
+}
+.img-placeholder .cam-icon { font-size:24px; opacity:0.4; }
+.img-placeholder .cam-label { font-weight:600; letter-spacing:1px; }
+
+/* ═══════════════════ RESPONSIVE ═══════════════════ */
+@media (max-width:1200px) {
+  .top-row { grid-template-columns:repeat(2, 1fr); }
+  .mid-row { grid-template-columns:1fr; }
+}
+@media (max-width:768px) {
+  .top-row { grid-template-columns:1fr; }
+  .images-grid { grid-template-columns:repeat(2, 1fr); }
+}
+
+/* ═══════════════════ SCROLLBAR ═══════════════════ */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header>
+  <div class="header-left">
+    <a href="index.html" class="back-btn">← Dashboard</a>
+    <span class="ek-name" id="ekName">EK-01</span>
+  </div>
+  <div class="header-center">
+    <span class="status-pill" id="statusPill">RİSKLİ</span>
+    <span class="header-score" id="headerScore">53%</span>
+  </div>
+  <div class="header-right">
+    <div class="user-info">
+      <div class="user-name">Demo-Kullanıcı</div>
+      <div class="user-role">Operatör / Admin</div>
+    </div>
+    <div class="avatar">👤</div>
+  </div>
+</header>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<div class="main">
+
+  <!-- ─── Top Row ─── -->
+  <div class="top-row">
+    <!-- Gauge -->
+    <div class="top-card gauge-card">
+      <svg class="gauge-lg" viewBox="0 0 140 140" id="gaugeSvg">
+        <circle class="gauge-bg-lg" cx="70" cy="70" r="58" />
+        <circle class="gauge-fill-lg" id="gaugeFill" cx="70" cy="70" r="58" transform="rotate(-90 70 70)" />
+        <text class="gauge-text-lg" id="gaugeText" x="70" y="65">53</text>
+        <text class="gauge-pct" x="70" y="88">%</text>
+      </svg>
+    </div>
+    <!-- Score -->
+    <div class="top-card">
+      <div class="score-label">SAĞLIK SKORU</div>
+      <div class="score-big" id="scoreBig">53</div>
+      <div class="score-sub">/ 100</div>
+    </div>
+    <!-- Info -->
+    <div class="top-card">
+      <div class="info-row">
+        <div class="info-label">HASAR TİPİ</div>
+        <div class="info-value orange" id="damageType">Kayma</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">DURUM</div>
+        <div class="info-value red" id="damageStatus">RİSKLİ</div>
+      </div>
+    </div>
+    <!-- Risk -->
+    <div class="top-card">
+      <div class="info-row">
+        <div class="info-label">RİSK SEVİYESİ</div>
+        <div class="info-value red" id="riskLevel">YÜKSEK</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">TOPLAM ALARM</div>
+        <div class="alarm-count" id="alarmCount">2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── AI Analysis + Operator ─── -->
+  <div class="mid-row">
+    <!-- AI Panel -->
+    <div class="ai-panel">
+      <div class="ai-header"><span class="ai-icon">✨</span> Yapay Zeka Analiz Yanıtı</div>
+      <div class="ai-body" id="aiBody">
+        <strong>Analiz Özeti:</strong> <span id="aiText"></span>
+      </div>
+      <div class="ai-footer">
+        <div class="ai-footer-item">
+          <div class="ai-footer-label">ÖNERİLEN AKSİYON</div>
+          <div class="ai-footer-value" id="aiAction">Bir sonraki duruşta detaylı fiziksel muayene önerilir.</div>
+        </div>
+        <div class="ai-footer-item">
+          <div class="ai-footer-label">TAHMİNİ KALAN ÖMÜR</div>
+          <div class="ai-footer-value" id="aiLife">~14 İş Günü</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operator Panel -->
+    <div class="operator-panel">
+      <div class="op-title">Operatör Etiketi</div>
+
+      <div class="sys-data">
+        <div class="sys-data-title">SİSTEM VERİLERİ (SALT OKUNUR)</div>
+        <div class="sys-grid">
+          <div class="sys-item"><span class="sys-key">Sağlık:</span> <span class="sys-val orange" id="sysHealth">53%</span></div>
+          <div class="sys-item"><span class="sys-key">Durum:</span> <span class="sys-val orange" id="sysStatus">riskli</span></div>
+          <div class="sys-item"><span class="sys-key">Hasar:</span> <span class="sys-val" id="sysDamage">Kayma</span></div>
+          <div class="sys-item"><span class="sys-key">Bozulma:</span> <span class="sys-val" id="sysDecay">2.13%</span></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">HASAR TÜRÜ (OPERATÖR)</div>
+        <select id="opDamageType">
+          <option>Kayma</option>
+          <option>Çatlak</option>
+          <option>Aşınma</option>
+          <option>Delaminasyon</option>
+          <option>Kenar Hasarı</option>
+          <option>Normal</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">SAĞLIK BİLGİSİ NOTU</div>
+        <input type="text" id="opNote1" placeholder="Gözlem veya ek bilgi giriniz...">
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">RİSK SEVİYESİ</div>
+        <div class="risk-buttons" id="riskButtons">
+          <div class="risk-btn" data-level="low" onclick="setRisk('low')">Düşük</div>
+          <div class="risk-btn active-mid" data-level="mid" onclick="setRisk('mid')">Orta</div>
+          <div class="risk-btn" data-level="high" onclick="setRisk('high')">Yüksek</div>
+          <div class="risk-btn" data-level="crit" onclick="setRisk('crit')">Kritik</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">OPERATÖR NOTU</div>
+        <textarea id="opNote2" placeholder="Bakım gereksinimleri, gözlemler veya eylem noktaları..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-save" onclick="saveLabel()">💾 Kaydet</button>
+        <button class="btn btn-approve" onclick="approveLabel()">✓ Onayla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── History Chart ─── -->
+  <div class="chart-panel">
+    <div class="chart-header">
+      <div class="chart-title">Sağlık Skoru Geçmişi</div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-line" style="background:var(--text2)"></div> Skor</div>
+        <div class="legend-item"><div class="legend-dash" style="border-color:var(--red)"></div> Kritik (45)</div>
+      </div>
+    </div>
+    <canvas id="historyChart"></canvas>
+  </div>
+
+  <!-- ─── Camera Images ─── -->
+  <div class="images-panel">
+    <div class="images-title">Son Analiz Görüntüleri (Son çekim)</div>
+    <div class="images-grid">
+      <div class="img-placeholder"><span class="cam-icon">📷</span><span class="cam-label">ÜST-SOL</span></div>
+      <div class="img-placeholder"><span class="cam-icon">📷</span><span class="cam-label">ÜST-SAĞ</span></div>
+      <div class="img-placeholder"><span class="cam-icon">📷</span><span class="cam-label">ALT-SOL</span></div>
+      <div class="img-placeholder"><span class="cam-icon">📷</span><span class="cam-label">ALT-SAĞ</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+// ─── Mock Data ───────────────────────────────────────────
+const SPLICE_DATA = {
+  'EK-01': { score:81, status:'normal', damage:'Yok', risk:'Düşük', decay:'0.4%', alarms:0,
+    ai:'EK-01 numaralı ek yerinde yapılan son görsel analizlerde sağlık skoru %81 olarak belirlenmiştir. Ek yeri stabil durumda, belirgin bir hasar tespit edilmemiştir.',
+    action:'Rutin izleme yeterlidir.', life:'~45 İş Günü',
+    history:[78,79,80,79,80,81,80,81,81,82,81,81] },
+  'EK-02': { score:47, status:'riskli', damage:'Çatlak', risk:'Yüksek', decay:'3.1%', alarms:3,
+    ai:'EK-02 numaralı ekte çatlak oluşumu tespit edilmiştir. Sağlık skoru %47 ile riskli bölgeye düşmüştür. Bozulma hızı 3.1% ile yüksek seviyededir.',
+    action:'Acil fiziksel muayene ve olası değişim planlaması önerilir.', life:'~7 İş Günü',
+    history:[62,59,57,55,53,51,50,49,48,47,47,47] },
+  'EK-03': { score:52, status:'riskli', damage:'Aşınma', risk:'Yüksek', decay:'2.5%', alarms:2,
+    ai:'EK-03 numaralı ekte yüzey aşınması gözlemlenmiştir. Sağlık skoru %52, bozulma trendi devam etmektedir.',
+    action:'Bir sonraki duruşta detaylı inceleme önerilir.', life:'~12 İş Günü',
+    history:[65,63,61,59,57,56,55,54,53,52,52,52] },
+  'EK-04': { score:69, status:'normal', damage:'Hafif Kayma', risk:'Orta', decay:'1.2%', alarms:1,
+    ai:'EK-04 numaralı ekte hafif kayma belirtileri tespit edilmiştir. Sağlık skoru %69, izleme altında tutulmalıdır.',
+    action:'İzleme sıklığını artırın.', life:'~25 İş Günü',
+    history:[65,65,66,67,67,68,68,68,69,69,69,69] },
+  'EK-05': { score:91, status:'normal', damage:'Yok', risk:'Düşük', decay:'0.2%', alarms:0,
+    ai:'EK-05 numaralı ek yeri mükemmel durumda. Sağlık skoru %91, herhangi bir hasar belirtisi yok.',
+    action:'Rutin izleme yeterlidir.', life:'~60 İş Günü',
+    history:[88,88,89,89,90,90,90,91,91,91,91,91] },
+  'EK-06': { score:96, status:'normal', damage:'Yok', risk:'Düşük', decay:'0.1%', alarms:0,
+    ai:'EK-06 numaralı ek en sağlıklı ek noktasıdır. Sağlık skoru %96, hiçbir anomali yok.',
+    action:'Standart izleme devam etsin.', life:'~90 İş Günü',
+    history:[93,93,94,94,95,95,95,96,96,96,96,96] },
+  'EK-07': { score:85, status:'normal', damage:'Yok', risk:'Düşük', decay:'0.3%', alarms:0,
+    ai:'EK-07 numaralı ek stabil durumda. Sağlık skoru %85, normal aralıkta.',
+    action:'Rutin izleme yeterlidir.', life:'~40 İş Günü',
+    history:[82,82,83,83,83,84,84,84,85,85,85,85] },
+  'EK-08': { score:58, status:'riskli', damage:'Delaminasyon', risk:'Yüksek', decay:'2.8%', alarms:2,
+    ai:'EK-08 numaralı ekte delaminasyon (katman ayrılması) tespit edilmiştir. Sağlık skoru %58, bozulma hızı yüksek.',
+    action:'Acil bakım planlaması yapılmalıdır.', life:'~10 İş Günü',
+    history:[68,66,65,63,62,61,60,59,59,58,58,58] },
+  'EK-09': { score:82, status:'normal', damage:'Yok', risk:'Düşük', decay:'0.5%', alarms:0,
+    ai:'EK-09 numaralı ek normal durumda. Sağlık skoru %82.',
+    action:'Rutin izleme yeterlidir.', life:'~38 İş Günü',
+    history:[78,79,79,80,80,81,81,81,82,82,82,82] },
+  'EK-10': { score:66, status:'normal', damage:'Hafif Aşınma', risk:'Orta', decay:'1.0%', alarms:1,
+    ai:'EK-10 numaralı ekte hafif yüzey aşınması mevcut. Sağlık skoru %66, izleme altında.',
+    action:'İzleme sıklığını artırın.', life:'~20 İş Günü',
+    history:[62,62,63,63,64,64,65,65,65,66,66,66] },
+  'EK-11': { score:55, status:'riskli', damage:'Çatlak', risk:'Yüksek', decay:'2.9%', alarms:3,
+    ai:'EK-11 numaralı ekte çatlak tespiti yapılmıştır. Sağlık skoru %55, düşüş trendi devam ediyor. PLC alarm tetiklenmiştir.',
+    action:'Acil müdahale gereklidir. Bant duruşunda değişim planlanmalıdır.', life:'~8 İş Günü',
+    history:[68,66,64,62,60,59,58,57,56,55,55,55] },
+  'EK-12': { score:75, status:'normal', damage:'Yok', risk:'Düşük', decay:'0.6%', alarms:0,
+    ai:'EK-12 numaralı ek normal aralıkta. Sağlık skoru %75.',
+    action:'Rutin izleme yeterlidir.', life:'~30 İş Günü',
+    history:[71,71,72,72,73,73,74,74,74,75,75,75] },
+};
+
+// ─── Get EK from URL ─────────────────────────────────────
+const urlParams = new URLSearchParams(window.location.search);
+const ekId = urlParams.get('ek') || 'EK-01';
+const data = SPLICE_DATA[ekId] || SPLICE_DATA['EK-01'];
+
+// ─── Color Helpers ────────────────────────────────────────
+function scoreColor(s) {
+  if (s >= 80) return 'var(--green)';
+  if (s >= 60) return 'var(--orange)';
+  return 'var(--red)';
+}
+function statusClass(s) {
+  if (s === 'normal') return 'pill-normal';
+  if (s === 'riskli') return 'pill-risky';
+  return 'pill-critical';
+}
+function infoColorClass(s) {
+  if (s >= 80) return 'green';
+  if (s >= 60) return 'orange';
+  return 'red';
+}
+
+// ─── Populate Page ────────────────────────────────────────
+document.title = `BELTEYE — ${ekId}`;
+document.getElementById('ekName').textContent = ekId;
+
+const statusText = data.status === 'normal' ? 'NORMAL' : 'RİSKLİ';
+document.getElementById('statusPill').textContent = statusText;
+document.getElementById('statusPill').className = 'status-pill ' + statusClass(data.status);
+document.getElementById('headerScore').textContent = data.score + '%';
+document.getElementById('headerScore').style.color = scoreColor(data.score);
+
+// Gauge
+const r = 58, C = 2 * Math.PI * r;
+const gaugeFill = document.getElementById('gaugeFill');
+gaugeFill.setAttribute('stroke', scoreColor(data.score));
+gaugeFill.setAttribute('stroke-dasharray', C);
+gaugeFill.setAttribute('stroke-dashoffset', C - (data.score / 100) * C);
+document.getElementById('gaugeText').textContent = data.score;
+document.getElementById('gaugeText').setAttribute('fill', scoreColor(data.score));
+
+// Score
+document.getElementById('scoreBig').textContent = data.score;
+document.getElementById('scoreBig').style.color = scoreColor(data.score);
+
+// Info
+document.getElementById('damageType').textContent = data.damage;
+document.getElementById('damageStatus').textContent = statusText;
+document.getElementById('damageStatus').className = 'info-value ' + infoColorClass(data.score);
+document.getElementById('riskLevel').textContent = data.risk;
+document.getElementById('alarmCount').textContent = data.alarms;
+
+// AI
+document.getElementById('aiText').textContent = data.ai;
+document.getElementById('aiAction').textContent = data.action;
+document.getElementById('aiLife').textContent = data.life;
+
+// System data
+document.getElementById('sysHealth').textContent = data.score + '%';
+document.getElementById('sysStatus').textContent = data.status;
+document.getElementById('sysDamage').textContent = data.damage;
+document.getElementById('sysDecay').textContent = data.decay;
+
+// ─── Risk Buttons ─────────────────────────────────────────
+let activeRisk = data.score >= 80 ? 'low' : data.score >= 60 ? 'mid' : 'high';
+function setRisk(level) {
+  activeRisk = level;
+  document.querySelectorAll('.risk-btn').forEach(btn => {
+    btn.className = 'risk-btn';
+    if (btn.dataset.level === level) {
+      const cls = {low:'active-low',mid:'active-mid',high:'active-high',crit:'active-crit'};
+      btn.classList.add(cls[level]);
+    }
+  });
+}
+setRisk(activeRisk);
+
+// ─── History Chart (Canvas) ───────────────────────────────
+function drawChart() {
+  const canvas = document.getElementById('historyChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const w = rect.width, h = 200;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+
+  const hist = data.history;
+  const padL = 40, padR = 10, padT = 10, padB = 30;
+  const cw = w - padL - padR, ch = h - padT - padB;
+
+  // Y axis
+  ctx.strokeStyle = '#243046';
+  ctx.lineWidth = 0.5;
+  ctx.font = '11px JetBrains Mono';
+  ctx.fillStyle = '#64748b';
+  for (let v = 20; v <= 100; v += 20) {
+    const y = padT + ch - ((v - 20) / 80) * ch;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+    ctx.fillText(v, 8, y + 4);
+  }
+
+  // Critical line at 45
+  const critY = padT + ch - ((45 - 20) / 80) * ch;
+  ctx.setLineDash([6, 4]);
+  ctx.strokeStyle = '#ef4444';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(padL, critY); ctx.lineTo(w - padR, critY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#ef4444';
+  ctx.font = '10px Inter';
+  ctx.fillText('Kritik', padL + 4, critY - 6);
+
+  // X labels
+  const times = [];
+  const now = new Date();
+  for (let i = hist.length - 1; i >= 0; i--) {
+    const t = new Date(now - (hist.length - 1 - i) * 120000);
+    times.unshift(t.getHours().toString().padStart(2,'0') + ':' + t.getMinutes().toString().padStart(2,'0'));
+  }
+  ctx.fillStyle = '#64748b';
+  ctx.font = '10px JetBrains Mono';
+  hist.forEach((_, i) => {
+    const x = padL + (i / (hist.length - 1)) * cw;
+    ctx.fillText(times[i], x - 14, h - 6);
+  });
+
+  // Data line
+  const points = hist.map((v, i) => ({
+    x: padL + (i / (hist.length - 1)) * cw,
+    y: padT + ch - ((v - 20) / 80) * ch
+  }));
+
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    const xc = (points[i-1].x + points[i].x) / 2;
+    const yc = (points[i-1].y + points[i].y) / 2;
+    ctx.quadraticCurveTo(points[i-1].x, points[i-1].y, xc, yc);
+  }
+  ctx.lineTo(points[points.length-1].x, points[points.length-1].y);
+  ctx.strokeStyle = scoreColor(data.score);
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Dots
+  points.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, i === points.length - 1 ? 5 : 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = scoreColor(data.score);
+    ctx.fill();
+  });
+}
+drawChart();
+window.addEventListener('resize', drawChart);
+
+// ─── Button Actions (demo) ────────────────────────────────
+function saveLabel() { alert('Etiket kaydedildi (demo)'); }
+function approveLabel() { alert('Etiket onaylandı (demo)'); }
+</script>
+</body>
+</html>
