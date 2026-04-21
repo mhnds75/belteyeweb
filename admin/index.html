@@ -479,7 +479,7 @@ function renderCompanies(){
       </div>
       <table>
         <thead><tr>
-          <th>Firma</th><th>Oluşturma</th><th>Kart</th><th>Durum</th><th style="text-align:right">İşlem</th>
+          <th>Firma</th><th>Kullanıcı</th><th>Kart</th><th>Durum</th><th style="text-align:right">İşlem</th>
         </tr></thead>
         <tbody id="companyTableBody">`;
 
@@ -498,7 +498,7 @@ function renderCompanies(){
           <div class="company-logo">${logoHtml}</div>
           <div><div class="company-name">${esc(c.name)}</div><div class="company-sub">${c.cardCount} kart</div></div>
         </div></td>
-        <td>${date}</td>
+        <td><div style="font-size:12px">${c.userEmail?esc(c.userEmail):'<span style="color:var(--text3)">—</span>'}</div></td>
         <td><strong>${c.cardCount}</strong></td>
         <td>${statusBadge}</td>
         <td><div class="action-btns" style="justify-content:flex-end">
@@ -530,7 +530,6 @@ function renderForm(editId){
   formLogo=c?.logo||null;
   const isEdit=!!c;
 
-  const cardOptions=[4,6,8,10,12,16,20];
   const selectedCards=c?.cardCount||12;
 
   let html=`<div class="fade-in"><div class="form-card">
@@ -556,11 +555,24 @@ function renderForm(editId){
 
     <div class="form-row">
       <label>Dashboard Kart Sayısı (EK Sayısı)</label>
-      <div class="card-count-selector" id="cardSelector">
-        ${cardOptions.map(n=>`<div class="card-opt${n===selectedCards?' selected':''}" onclick="selectCard(this,${n})">${n}</div>`).join('')}
-      </div>
-      <input type="hidden" id="fCardCount" value="${selectedCards}">
-      <div class="hint">Konveyör bant üzerindeki ek (splice) sayısı</div>
+      <input type="number" id="fCardCount" value="${selectedCards}" min="1" max="100" placeholder="Örn: 12">
+      <div class="hint">Konveyör bant üzerindeki ek (splice) sayısını yazın</div>
+    </div>
+
+    <div style="border-top:1px solid var(--border);margin:24px 0;padding-top:24px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px">Dashboard Giriş Bilgileri</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">Bu firma için dashboard giriş bilgilerini tanımlayın</div>
+    </div>
+
+    <div class="form-row">
+      <label>Kullanıcı E-posta</label>
+      <input type="email" id="fUserEmail" value="${isEdit?esc(c.userEmail||''):''}" placeholder="ornek@firma.com">
+    </div>
+
+    <div class="form-row">
+      <label>Kullanıcı Şifre</label>
+      <input type="text" id="fUserPass" value="${isEdit?esc(c.userPass||''):''}" placeholder="Şifre belirleyin">
+      <div class="hint">Firma kullanıcısının dashboard'a giriş yapacağı şifre</div>
     </div>
 
     <div class="form-row">
@@ -596,12 +608,6 @@ function handleLogo(input){
   reader.readAsDataURL(file);
 }
 
-function selectCard(el,n){
-  document.querySelectorAll('.card-opt').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('fCardCount').value=n;
-}
-
 function selectStatus(el,status){
   document.querySelectorAll('.status-opt').forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');
@@ -610,12 +616,15 @@ function selectStatus(el,status){
 
 function saveForm(){
   const name=document.getElementById('fName').value.trim();
-  const cardCount=parseInt(document.getElementById('fCardCount').value);
+  const cardCount=parseInt(document.getElementById('fCardCount').value)||12;
   const status=document.getElementById('fStatus').value;
+  const userEmail=document.getElementById('fUserEmail').value.trim();
+  const userPass=document.getElementById('fUserPass').value;
 
   if(!name){toast('Firma adı gerekli','error');return;}
+  if(cardCount<1||cardCount>100){toast('Kart sayısı 1-100 arası olmalı','error');return;}
 
-  const data={name,logo:formLogo,cardCount,status};
+  const data={name,logo:formLogo,cardCount,status,userEmail,userPass};
 
   if(editingId){
     updateCompany(editingId,data);
